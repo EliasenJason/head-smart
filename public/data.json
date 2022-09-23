@@ -1,0 +1,37 @@
+{
+  "heads": [
+    {
+      "name": "Gardner Denver",
+      "picture": "https://www.gdenergyproducts.com/products/fluid-ends-modules/vx-fluid-end#info",
+      "parts": {
+        "packing": {
+          "trican-part-number": 67273,
+          "vender-part-number": null,
+          "picture": "https://www.gdenergyproducts.com/products/consumables/packing"
+        }
+      }
+    },
+    {
+      "name": "Vulcan",
+      "picture": "https://www.gdenergyproducts.com/products/fluid-ends-modules/vx-fluid-end#info",
+      "parts": {
+        "packing": {
+          "trican-part-number": 67273,
+          "vender-part-number": null,
+          "picture": "https://www.gdenergyproducts.com/products/consumables/packing"
+        }
+      }
+    },
+    {
+      "name": "FMC sucks",
+      "picture": "https://www.gdenergyproducts.com/products/fluid-ends-modules/vx-fluid-end#info",
+      "parts": {
+        "packing": {
+          "trican-part-number": 67273,
+          "vender-part-number": null,
+          "picture": "https://www.gdenergyproducts.com/products/consumables/packing"
+        }
+      }
+    }
+  ]
+}
