@@ -4,12 +4,6 @@ import Title from '../components/title';
 import data from '../public/data.json';
 import Link from 'next/link';
 
-const GlobalStyle = createGlobalStyle`
- h1 {
-   font-size: 1rem;
- }
-`
-
 const StyledContainer = styled.div`
   display: grid; 
   grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -34,22 +28,15 @@ const StyledHeadButton = styled.a`
   letter-spacing: 3px;
 `
 
-
 export default function Home() {
-  console.log(data)
   return (
     <>
-      <Head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@400;700;900&family=Roboto:wght@400;700;900&display=swap" rel="stylesheet" />
-      </Head>
-      <GlobalStyle />
       <StyledContainer>
         <Title />
         {data.heads.map((item) => {
+          const url = `/heads/${item.name.toLowerCase()}`
           return (
-            <Link href="/">
+            <Link href={url} key={item.name}>
               <StyledHeadButton onClick={() => console.log('clicked')}>{item.name}</StyledHeadButton>
             </Link>
           )
