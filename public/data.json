@@ -2,47 +2,75 @@
   "heads": [
     {
       "name": "gardner_denver",
-      "picture": "https://www.gdenergyproducts.com/products/fluid-ends-modules/vx-fluid-end#info",
-      "parts": {
-        "packing": {
-          "trican-part-number": 67273,
-          "vender-part-number": null,
+      "picture": "https://www.gdenergyproducts.com/media/products/VX-Fluid-End-1200x1200.png",
+      "parts": [
+        {
+          "name":"packing",
+          "tricanPartNumber": 67273,
+          "venderPartNumber": 65745,
+          "picture": "https://www.gdenergyproducts.com/products/consumables/packing"
+        },
+        {
+          "name":"stuffing box seal",
+          "tricanPartNumber": 15464,
+          "venderPartNumber": 15151,
           "picture": "https://www.gdenergyproducts.com/products/consumables/packing"
         }
-      }
+      ]
     },
     {
       "name": "vulcan",
       "picture": "https://www.gdenergyproducts.com/products/fluid-ends-modules/vx-fluid-end#info",
-      "parts": {
-        "packing": {
-          "trican-part-number": 67273,
-          "vender-part-number": null,
+      "parts": [
+        {
+          "name":"packing",
+          "tricanPartNumber": 67273,
+          "venderPartNumber": 65745,
+          "picture": "https://www.gdenergyproducts.com/products/consumables/packing"
+        },
+        {
+          "name":"stuffing box seal",
+          "tricanPartNumber": 15464,
+          "venderPartNumber": 15151,
           "picture": "https://www.gdenergyproducts.com/products/consumables/packing"
         }
-      }
+      ]
     },
     {
-      "name": "fmc_sucks",
+      "name": "fmc",
       "picture": "https://www.gdenergyproducts.com/products/fluid-ends-modules/vx-fluid-end#info",
-      "parts": {
-        "packing": {
-          "trican-part-number": 67273,
-          "vender-part-number": null,
+      "parts": [
+        {
+          "name":"packing",
+          "tricanPartNumber": 67273,
+          "venderPartNumber": 65745,
+          "picture": "https://www.gdenergyproducts.com/products/consumables/packing"
+        },
+        {
+          "name":"stuffing box seal",
+          "tricanPartNumber": 15464,
+          "venderPartNumber": 15151,
           "picture": "https://www.gdenergyproducts.com/products/consumables/packing"
         }
-      }
+      ]
     },
     {
-      "name": "karlee_head",
+      "name": "troy_pumpomatic_2000",
       "picture": "https://www.gdenergyproducts.com/products/fluid-ends-modules/vx-fluid-end#info",
-      "parts": {
-        "packing": {
-          "trican-part-number": 67273,
-          "vender-part-number": null,
+      "parts": [
+        {
+          "name":"packing",
+          "tricanPartNumber": 67273,
+          "venderPartNumber": 65745,
+          "picture": "https://www.gdenergyproducts.com/products/consumables/packing"
+        },
+        {
+          "name":"stuffing box seal",
+          "tricanPartNumber": 15464,
+          "venderPartNumber": 15151,
           "picture": "https://www.gdenergyproducts.com/products/consumables/packing"
         }
-      }
+      ]
     }
   ]
 }

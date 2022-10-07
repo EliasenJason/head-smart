@@ -4,4 +4,10 @@ const nextConfig = {
   swcMinify: true,
 }
 
-module.exports = nextConfig
+module.exports = {
+  reactStrictMode: true,
+  swcMinify: true,
+  images: {
+    domains: ['www.gdenergyproducts.com']
+  }
+}

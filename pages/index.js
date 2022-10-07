@@ -26,6 +26,11 @@ const StyledHeadButton = styled.a`
   font-weight: bolder;
   text-transform: uppercase;
   letter-spacing: 3px;
+  :hover {
+    background: white;
+    color: #b8a286;
+    cursor: pointer;
+  }
 `
 
 export default function Home() {
@@ -37,7 +42,7 @@ export default function Home() {
           const url = `/heads/${item.name.toLowerCase()}`
           return (
             <Link href={url} key={item.name}>
-              <StyledHeadButton onClick={() => console.log('clicked')}>{item.name}</StyledHeadButton>
+              <StyledHeadButton>{item.name.split('_').join(' ')}</StyledHeadButton>
             </Link>
           )
         })}

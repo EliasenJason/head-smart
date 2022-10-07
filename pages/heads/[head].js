@@ -1,14 +1,100 @@
 import styled from "styled-components";
 import { useRouter } from 'next/router';
 import data from '../../public/data.json'
+import Image from "next/image";
+
+const StyledTitle = styled.h2`
+  font-size: 3rem;
+  margin: 0 auto;
+  text-align: center;
+  text-transform: uppercase;
+  color: red;
+  z-index: 99;
+`
+
+const ImageWrapper = styled.div`
+  width: 75%;
+  margin: 0 auto;
+  position: relative;
+  top: -300px;
+  z-index: 1;
+  
+  @media (max-width: 1500px) {
+    top: -250px;
+  }
+  @media (max-width: 1100px) {
+    top: -170px;
+  }
+  @media (max-width: 750px) {
+    top: -70px;
+  }
+  
+`
+
+const PartsGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr .5fr;
+  position:relative;
+  top: -100px;
+`
+
+const GridLine = styled.div`
+  border-bottom: 1px solid black;
+`
+
+const GridBox = styled.div`
+  margin: 0 auto;
+  font-size: 1.2rem;
+  padding: .2em;
+`
+
+const SeeIconContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
 
 export default function Head({headFromUrl}) {
   
-  const filteredData = data.heads.filter((head) => { //filter thru the data file and match up the correct head from static props
+  const selectedHead = data.heads.filter((head) => { //filter thru the data file and match up the correct head from static props
     return head.name === headFromUrl.head
   })[0]
   return (
-    <h3>{filteredData.name.split('_').join(' ')}</h3>
+    <>
+      <StyledTitle>{selectedHead.name.split('_').join(' ')}</StyledTitle>
+      <ImageWrapper>
+        <Image
+          src={selectedHead.picture}
+          alt={`image of the ${selectedHead.name.split('_').join(' ')} head`}
+          layout="responsive"
+          height="150px"
+          width="150px"
+          priority="true"
+        />
+      </ImageWrapper>
+      <PartsGrid>
+        <GridBox>Part</GridBox><GridBox>Trican #</GridBox><GridBox>Details</GridBox>
+        <GridLine /><GridLine /><GridLine />
+        {selectedHead.parts.map(part => {
+          return (
+            <>
+              <GridBox key={part.name}>{part.name}</GridBox>
+              <GridBox>{part.tricanPartNumber}</GridBox>
+              <SeeIconContainer>
+                <Image
+                  src={"/pictures/eye.png"}
+                  alt="eye"
+                  layout="intrinsic"
+                  width="50"
+                  height="30"
+                />
+              </SeeIconContainer>
+            </>
+          )
+        })}
+      </PartsGrid>
+    </>
   )
 }
 
