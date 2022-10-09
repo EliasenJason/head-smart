@@ -15,27 +15,12 @@ const StyledTitle = styled.h2`
 const ImageWrapper = styled.div`
   width: 75%;
   margin: 0 auto;
-  position: relative;
-  top: -300px;
   z-index: 1;
-  
-  @media (max-width: 1500px) {
-    top: -250px;
-  }
-  @media (max-width: 1100px) {
-    top: -170px;
-  }
-  @media (max-width: 750px) {
-    top: -70px;
-  }
-  
 `
 
 const PartsGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr .5fr;
-  position:relative;
-  top: -100px;
 `
 
 const GridLine = styled.div`
@@ -68,8 +53,8 @@ export default function Head({headFromUrl}) {
           src={selectedHead.picture}
           alt={`image of the ${selectedHead.name.split('_').join(' ')} head`}
           layout="responsive"
-          height="150px"
-          width="150px"
+          width="300px"
+          height="200px"
           priority="true"
         />
       </ImageWrapper>
