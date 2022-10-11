@@ -5,10 +5,11 @@ const EachLine = styled.div`
 `
 
 const GridBox = styled.div`
-margin: auto;
+display: flex;
+justify-content: center;
+align-items: center;
 font-size: .7rem;
 padding: .2em;
-text-align: center;
 width: 100%;
 height: 100%;
 border-bottom: solid 1px black;
