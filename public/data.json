@@ -167,8 +167,14 @@
           "picture": null
         },
         {
-          "name":"suction seal",
+          "name":"suction seal (new)",
           "tricanPartNumber": 77134,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name":"suction seal (old)",
+          "tricanPartNumber": 77235,
           "venderPartNumber": null,
           "picture": null
         },
@@ -227,7 +233,7 @@
           "picture": null
         },
         {
-          "name":"discharge cover retainer nut",
+          "name":"discharge retainer nut",
           "tricanPartNumber": 77145,
           "venderPartNumber": null,
           "picture": null
@@ -427,6 +433,401 @@
         {
           "name": "gland nut",
           "tricanPartNumber": "2P156215NL",
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "gland nut lock",
+          "tricanPartNumber": "2A118875",
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "?backup ring?",
+          "tricanPartNumber": 75767,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "suction/discharge seal",
+          "tricanPartNumber": 75766,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "plug for grease hole",
+          "tricanPartNumber": 12160,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "packing kit",
+          "tricanPartNumber": 62357,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "wiper ring",
+          "tricanPartNumber": 12132,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "sand ring",
+          "tricanPartNumber": 10688,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "brass",
+          "tricanPartNumber": 10690,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "plunger",
+          "tricanPartNumber": 72768,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "pony rod clamp",
+          "tricanPartNumber": 10544,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "discharge retaining nut",
+          "tricanPartNumber": 76255,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "flange discharge seal",
+          "tricanPartNumber": 55749,
+          "venderPartNumber": null,
+          "picture": null
+        }
+      ]
+    },
+    {
+      "name": "spm_standard_qem3000_5inch",
+      "picture": "https://www.gdenergyproducts.com/products/fluid-ends-modules/vx-fluid-end#info",
+      "parts": [
+        {
+          "name": "?nut?",
+          "tricanPartNumber": 46705,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "?stud?",
+          "tricanPartNumber": 57416,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "pony rod clamp",
+          "tricanPartNumber": 10544,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "plunger",
+          "tricanPartNumber": 72768,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "?dowel pin?",
+          "tricanPartNumber": 54007,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "plug for grease hole",
+          "tricanPartNumber": 12160,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "suction offset seal (old)",
+          "tricanPartNumber": 59888,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "suction offset seal (new)",
+          "tricanPartNumber": 75767,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "suction D ring seal (old)",
+          "tricanPartNumber": 59887,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "suction D ring seal (new)",
+          "tricanPartNumber": 75767,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "suction cap (old)",
+          "tricanPartNumber": 68968,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "suction cap (new)",
+          "tricanPartNumber": 75765,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "spring",
+          "tricanPartNumber": 10687,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "keeper",
+          "tricanPartNumber": 51267,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "gland nut",
+          "tricanPartNumber": 64338,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "packing kit",
+          "tricanPartNumber": 62357,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "brass",
+          "tricanPartNumber": 10689,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "brass insert",
+          "tricanPartNumber": 10690,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "sand ring",
+          "tricanPartNumber": 10688,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "D ring discharge seal",
+          "tricanPartNumber": 50166,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "discharge retainer nut",
+          "tricanPartNumber": 68969,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "discharge cover",
+          "tricanPartNumber": 50816,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "discharge flange seal",
+          "tricanPartNumber": 55749,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "suction retainer nut",
+          "tricanPartNumber": 52162,
+          "venderPartNumber": null,
+          "picture": null
+        },{
+          "name": "wiper ring",
+          "tricanPartNumber": 12132,
+          "venderPartNumber": null,
+          "picture": null
+        }
+      ]
+    },
+    {
+      "name": "vulcan_qem3000_5inch",
+      "picture": "https://www.gdenergyproducts.com/products/fluid-ends-modules/vx-fluid-end#info",
+      "parts": [
+        {
+          "name": "spring",
+          "tricanPartNumber": 10687,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "sand ring",
+          "tricanPartNumber": 10688,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "brass insert",
+          "tricanPartNumber": 10689,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "brass (lantern ring)",
+          "tricanPartNumber": 10690,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "discharge flange stud",
+          "tricanPartNumber": 77125,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "packing kit",
+          "tricanPartNumber": 62357,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "suction seal",
+          "tricanPartNumber": 77134,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "discharge flange seal",
+          "tricanPartNumber": 77135,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "discharge flange nut",
+          "tricanPartNumber": 77136,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "plunger",
+          "tricanPartNumber": 72768,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "suction cover",
+          "tricanPartNumber": 77143,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "stuffing box nut",
+          "tricanPartNumber": 77137,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "stuffing box",
+          "tricanPartNumber": 77116,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "packing nut adapter flange",
+          "tricanPartNumber": 77119,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "stuffing box stud",
+          "tricanPartNumber": 77138,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "gland nut",
+          "tricanPartNumber": 77120,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "discharge seal",
+          "tricanPartNumber": 77139,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "discharge cover",
+          "tricanPartNumber": 77144,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "discharge retainer nut",
+          "tricanPartNumber": 77145,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "keeper",
+          "tricanPartNumber": 77140,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "stuffing box o ring",
+          "tricanPartNumber": 77121,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "suction cover adapter flange",
+          "tricanPartNumber": 77146,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "suction retainer nut",
+          "tricanPartNumber": 77147,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "stuffing box seal",
+          "tricanPartNumber": 77123,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name": "adapter ring",
+          "tricanPartNumber": 77124,
+          "venderPartNumber": null,
+          "picture": null
+        }
+      ]
+    },
+    {
+      "name": "headname",
+      "picture": "https://www.gdenergyproducts.com/products/fluid-ends-modules/vx-fluid-end#info",
+      "parts": [
+        {
+          "name": "",
+          "tricanPartNumber": null,
           "venderPartNumber": null,
           "picture": null
         }
