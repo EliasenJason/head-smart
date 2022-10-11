@@ -5,16 +5,112 @@
       "picture": "/pictures/heads/GD head 300 x 200.png",
       "parts": [
         {
-          "name":"packing",
-          "tricanPartNumber": 67273,
-          "venderPartNumber": 65745,
-          "picture": "https://www.gdenergyproducts.com/products/consumables/packing"
+          "name":"stuffing box",
+          "tricanPartNumber": 67852,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name":"spring",
+          "tricanPartNumber": 10687,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name":"spring retainer",
+          "tricanPartNumber": 67082,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name":"discharge cover",
+          "tricanPartNumber": 67270,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name":"suction cover",
+          "tricanPartNumber": 67271,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name":"suction/discharge seal",
+          "tricanPartNumber": 62295,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name":"suction retainer nut",
+          "tricanPartNumber": 67853,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name":"discharge flange seal",
+          "tricanPartNumber": 12136,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name":"plunger",
+          "tricanPartNumber": 50031,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name":"pony rod clamp",
+          "tricanPartNumber": 50487,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name":"packing nut",
+          "tricanPartNumber": 65398,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name":"stuffing box seal carrier",
+          "tricanPartNumber": 64547,
+          "venderPartNumber": null,
+          "picture": null
         },
         {
           "name":"stuffing box seal",
-          "tricanPartNumber": 15464,
-          "venderPartNumber": 15151,
-          "picture": "https://www.gdenergyproducts.com/products/consumables/packing"
+          "tricanPartNumber": 64549,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name":"sand ring",
+          "tricanPartNumber": 67949,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name":"packing kit",
+          "tricanPartNumber": 67273,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name":"wiper ring",
+          "tricanPartNumber": 55547,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name":"brass (lantern ring)",
+          "tricanPartNumber": 67948,
+          "venderPartNumber": null,
+          "picture": null
+        },
+        {
+          "name":"o ring",
+          "tricanPartNumber": 55546,
+          "venderPartNumber": null,
+          "picture": null
         }
       ]
     },
