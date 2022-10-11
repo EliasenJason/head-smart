@@ -2,9 +2,10 @@ import styled from "styled-components";
 import { useRouter } from 'next/router';
 import data from '../../public/data.json'
 import Image from "next/image";
+import GridRow from "../../components/gridrow";
 
 const StyledTitle = styled.h2`
-  font-size: 3rem;
+  font-size: 2rem;
   margin: 0 auto;
   text-align: center;
   text-transform: uppercase;
@@ -24,21 +25,15 @@ const PartsGrid = styled.div`
 `
 
 const GridLine = styled.div`
-  border-bottom: 1px solid black;
+  border-bottom: 2px solid black;
 `
 
 const GridBox = styled.div`
   margin: 0 auto;
-  font-size: 1.2rem;
+  font-size: 1rem;
   padding: .2em;
+  text-align: center;
 `
-
-const SeeIconContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`
-
 
 export default function Head({headFromUrl}) {
   
@@ -61,23 +56,7 @@ export default function Head({headFromUrl}) {
       <PartsGrid>
         <GridBox>Part</GridBox><GridBox>Trican #</GridBox><GridBox>Details</GridBox>
         <GridLine /><GridLine /><GridLine />
-        {selectedHead.parts.map(part => {
-          return (
-            <>
-              <GridBox key={part.name}>{part.name}</GridBox>
-              <GridBox>{part.tricanPartNumber}</GridBox>
-              <SeeIconContainer>
-                <Image
-                  src={"/pictures/eye.png"}
-                  alt="eye"
-                  layout="intrinsic"
-                  width="50"
-                  height="30"
-                />
-              </SeeIconContainer>
-            </>
-          )
-        })}
+        {selectedHead.parts.map(part => <GridRow part={part}></GridRow>)}
       </PartsGrid>
     </>
   )
