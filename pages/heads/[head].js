@@ -56,7 +56,7 @@ export default function Head({headFromUrl}) {
       <PartsGrid>
         <GridBox>Part</GridBox><GridBox>Trican #</GridBox><GridBox>Details</GridBox>
         <GridLine /><GridLine /><GridLine />
-        {selectedHead.parts.map(part => <GridRow part={part}></GridRow>)}
+        {selectedHead.parts.map(part => <GridRow key={part.name} part={part}></GridRow>)}
       </PartsGrid>
     </>
   )
