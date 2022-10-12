@@ -2,7 +2,7 @@
   "heads": [
     {
       "name": "gardner_denver_qws2700_4.5inch",
-      "picture": "/pictures/heads/GD head 300 x 200.png",
+      "picture": "/pictures/heads/gardner denver qws2700 45/head 300 x 200.png",
       "parts": [
         {
           "name":"stuffing box",
@@ -116,7 +116,7 @@
     },
     {
       "name": "vulcan_qws2700_4.5inch",
-      "picture": "https://www.gdenergyproducts.com/products/fluid-ends-modules/vx-fluid-end#info",
+      "picture": "/pictures/heads/vulcan qws2700 45/head 300 x 200.png",
       "parts": [
         {
           "name":"spring",
@@ -272,7 +272,7 @@
     },
     {
       "name": "spm_ss_gl_qws2700_4.5inch",
-      "picture": "https://www.gdenergyproducts.com/products/fluid-ends-modules/vx-fluid-end#info",
+      "picture": "/pictures/heads/spm ss gl qws2700 45/head 300 x 200.png",
       "parts": [
         {
           "name":"gland nut lock",
@@ -667,7 +667,7 @@
     },
     {
       "name": "vulcan_qem3000_5inch",
-      "picture": "https://www.gdenergyproducts.com/products/fluid-ends-modules/vx-fluid-end#info",
+      "picture": "/pictures/heads/vulcan qem3000 5/head 300 x 200.png",
       "parts": [
         {
           "name": "spring",
