@@ -1,16 +1,21 @@
-import Head from 'next/head';
-import styled, { createGlobalStyle } from 'styled-components';
-import Title from '../components/title';
-import data from '../public/data.json';
 import Link from 'next/link';
-import Heads from './heads'
-
-
+import Card from '../components/cards';
+import Image from 'next/image';
 
 export default function Home() {
   return (
     <>
-      <button><Link href="/heads">Head Types</Link></button>
+      
+      
+        <Link href="/heads">
+          <button>
+            <Card
+              image="/../public/pictures/parts.jpg"
+              title="Head Smart"
+              description="find the trican and vendor part numbers for the correct head"
+            />
+          </button>
+        </Link>
       <button><Link href="/maintenance">Maintenance Tracker</Link></button>
     </>
   )
