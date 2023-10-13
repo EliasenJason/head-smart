@@ -9,7 +9,7 @@ export default function Home() {
         <Link href="/heads">
           <button>
             <Card
-              image="/../public/pictures/parts.jpg"
+              image="/pictures/parts.jpg"
               title="Head Smart"
               description="find the trican and vendor part numbers for the correct head"
             />
