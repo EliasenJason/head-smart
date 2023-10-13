@@ -29,12 +29,12 @@ const CardDescription = styled.p`
   color: #555;
 `;
 
-const Card = ({ image, title, description }) => (
+const Card = ({ image, title, description, alt }) => (
   <CardContainer>
     <ImageContainer>
       <Image
           src={image}
-          alt="test"
+          alt={alt}
           width= "100%"
           height="100%"
         />
