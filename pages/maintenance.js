@@ -2,11 +2,7 @@ import styled from "styled-components"
 import Title from "../components/title"
 import Link from "next/link"
 import { useState, useEffect } from "react";
-<<<<<<< HEAD
-import Job from "../components/maintenance/job";
-=======
 import Job from "./maintenance/job";
->>>>>>> parent of 415369d (nope)
 
 const JobButton = styled.div`
   font-size: 1.5rem;
