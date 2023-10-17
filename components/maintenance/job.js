@@ -82,7 +82,7 @@ export default function Job({job, back}) {
         <RightUnits>
           <h3>Right</h3>
         {job.unitsOnRight.map((unit, index) => {
-            return <p key={index}>{unit.unitNumber}</p>
+            return <p key={index} onClick={() => setShowUnitPopUp(unit)}>{unit.unitNumber}</p>
           })}
         </RightUnits>
       </UnitContainer>
