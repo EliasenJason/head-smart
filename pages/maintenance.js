@@ -37,11 +37,9 @@ export default function Maintenance() {
 
   return (
     <>
-    <p>work?</p>
       <Title backButtonHref={"/"} Text={'Maintenance'}/>
       {selectedJob ? (
         <Job job={selectedJob} back={setSelectedJob} />
-        // <p>selected</p>
       ) : (
       <>
       {loading ? (

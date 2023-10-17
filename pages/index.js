@@ -19,7 +19,7 @@ export default function Home() {
               image="/pictures/parts.jpg"
               alt="picture of consumables"
               title="Head Smart"
-              description="use this area to find the right part for the right fluid end"
+              description="find the right part for the right fluid end"
             />
           </button>
         </Link>
@@ -29,7 +29,7 @@ export default function Home() {
               image="/"
               alt="someone send me a picture of someone doing head maintenance"
               title="Maintenance Tracker"
-              description="**This area is under development**"
+              description="**This area is under active development**"
             />
           </button>
         </Link>

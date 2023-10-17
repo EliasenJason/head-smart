@@ -1,6 +1,9 @@
+//TODO after deleting a job need to go back to main maintenance page and refresh to see changes
+
 import styled from "styled-components"
 import Confirm from "./confirm"
 import { useState } from "react"
+import { useRouter } from "next/router"
 
 const JobNumberContainer = styled.div`
   width: 100%;
@@ -36,6 +39,7 @@ const DeleteButton = styled.button`
 export default function Job({job, back}) {
   const [showDeletePopUp, setShowDeletePopUp] = useState(false)
 
+  const router = useRouter()
   const toggleDeletePopUp = () => {
     showDeletePopUp ? setShowDeletePopUp(false) : setShowDeletePopUp(true)
   }
@@ -51,7 +55,7 @@ export default function Job({job, back}) {
       })
       if (res.ok) {
         console.log('job deleted')
-        
+        router.reload()
       } else {
         console.error('Error in deleting job:', res.statusText)
       }

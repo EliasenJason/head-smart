@@ -1,3 +1,5 @@
+//TODO after deleting a job need to go back to main maintenance page and refresh to see changes
+
 import styled from "styled-components"
 
 const PopUp = styled.div`

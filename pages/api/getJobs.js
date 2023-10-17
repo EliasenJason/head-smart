@@ -9,10 +9,10 @@ export default async function createJob(req, res) {
     await connectMongo()
     console.log('connected to mongo')
 
-    console.log('creating document')
+    console.log('requesting data')
     console.log(req.body)
     let mongoResponse = await jobModel.find({})
-    console.log('created document')
+    console.log('data received')
     console.log(mongoResponse)
     res.status(200).json(mongoResponse)
   } catch(error) {
