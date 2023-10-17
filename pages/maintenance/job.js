@@ -28,7 +28,7 @@ const RightUnits = styled.div`
   align-items: center;
 `
 
-export default function Job({job, back}) {
+export default function Job({job = {jobNumber: null}, back}) {
   console.log(job)
   return (
     <>
