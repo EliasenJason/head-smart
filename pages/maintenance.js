@@ -50,9 +50,10 @@ export default function Maintenance() {
         <div>
             {data.map((item, index) => {
               return (
-                <JobButton key={index} onClick={() => setSelectedJob(item)}>
-                    <p>{item.jobNumber}</p>
-                </JobButton>
+                <p key={index}>{item.jobNumber}</p>
+                // <JobButton key={index} onClick={() => setSelectedJob(item)}>
+                //     <p>{item.jobNumber}</p>
+                // </JobButton>
               )
             })}
         </div>
