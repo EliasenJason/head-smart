@@ -40,7 +40,7 @@ export default function Maintenance() {
       <Title backButtonHref={"/"} Text={'Maintenance'}/>
       {selectedJob ? (
         // <Job job={selectedJob} back={setSelectedJob} />
-        <p>work?</p>
+        <p>work? </p>
       ) : (
       <>
       {loading ? (
