@@ -42,7 +42,7 @@ export default function Maintenance() {
         <Job job={selectedJob} back={setSelectedJob} />
       ) : (
       <>
-      {loading ? (
+      {/* {loading ? (
         <p>Loading Jobs...</p>
       ): (
         <div>
@@ -54,7 +54,7 @@ export default function Maintenance() {
               )
             })}
         </div>
-      )}
+      )} */}
       <Link href="/maintenance/createjob"><button>Create New Job</button></Link>
       </>
       )}
