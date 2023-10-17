@@ -34,7 +34,7 @@ const jobPlaceHolder = {
   unitsOnRight: [1,2]
 }
 
-export default function Job({job = {jobNumber: null,}, back}) {
+export default function Job({job = {jobPlaceHolder}, back}) {
   console.log(job)
   return (
     <>
