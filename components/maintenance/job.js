@@ -1,9 +1,6 @@
 import styled from "styled-components"
-import Title from "../title"
 import Confirm from "./confirm"
 import { useState } from "react"
-import mongoose from "mongoose"
-import { useRouter } from "next/router"
 
 const JobNumberContainer = styled.div`
   width: 100%;

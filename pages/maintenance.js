@@ -2,7 +2,7 @@ import styled from "styled-components"
 import Title from "../components/title"
 import Link from "next/link"
 import { useState, useEffect } from "react";
-// import Job from "../components/maintenance/job";
+import Job from "../components/maintenance/job";
 
 const JobButton = styled.div`
   font-size: 1.5rem;
@@ -40,8 +40,8 @@ export default function Maintenance() {
     <p>work?</p>
       <Title backButtonHref={"/"} Text={'Maintenance'}/>
       {selectedJob ? (
-        // <Job job={selectedJob} back={setSelectedJob} />
-        <p>selected</p>
+        <Job job={selectedJob} back={setSelectedJob} />
+        // <p>selected</p>
       ) : (
       <>
       {loading ? (
@@ -50,10 +50,9 @@ export default function Maintenance() {
         <div>
             {data.map((item, index) => {
               return (
-                <p key={index}>{item.jobNumber}</p>
-                // <JobButton key={index} onClick={() => setSelectedJob(item)}>
-                //     <p>{item.jobNumber}</p>
-                // </JobButton>
+                <JobButton key={index} onClick={() => setSelectedJob(item)}>
+                    <p>{item.jobNumber}</p>
+                </JobButton>
               )
             })}
         </div>
