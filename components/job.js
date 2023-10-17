@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import Title from "../../components/title"
+import Title from "./title"
 
 const JobNumberContainer = styled.div`
   width: 100%;
