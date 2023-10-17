@@ -39,10 +39,11 @@ export default function Maintenance() {
     <>
       <Title backButtonHref={"/"} Text={'Maintenance'}/>
       {selectedJob ? (
-        <Job job={selectedJob} back={setSelectedJob} />
+        // <Job job={selectedJob} back={setSelectedJob} />
+        <p>work?</p>
       ) : (
       <>
-      {/* {loading ? (
+      {loading ? (
         <p>Loading Jobs...</p>
       ): (
         <div>
@@ -54,7 +55,7 @@ export default function Maintenance() {
               )
             })}
         </div>
-      )} */}
+      )}
       <Link href="/maintenance/createjob"><button>Create New Job</button></Link>
       </>
       )}
