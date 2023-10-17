@@ -2,6 +2,7 @@
 
 import styled from "styled-components"
 import Confirm from "./confirm"
+import Unit from "./unit"
 import { useState } from "react"
 import { useRouter } from "next/router"
 
@@ -38,10 +39,14 @@ const DeleteButton = styled.button`
 
 export default function Job({job, back}) {
   const [showDeletePopUp, setShowDeletePopUp] = useState(false)
+  const [showUnitPopUp, setShowUnitPopUp] = useState('')
 
   const router = useRouter()
   const toggleDeletePopUp = () => {
     showDeletePopUp ? setShowDeletePopUp(false) : setShowDeletePopUp(true)
+  }
+  const toggleUnitPopUp = () => {
+    showUnitPopUp && setShowUnitPopUp('')
   }
 
   const deleteJob = async () => {
@@ -71,7 +76,7 @@ export default function Job({job, back}) {
         <LeftUnits>
         <h3>Left</h3>
           {job.unitsOnLeft.map((unit, index) => {
-            return <p key={index}>{unit.unitNumber}</p>
+            return <p key={index} onClick={() => setShowUnitPopUp(unit)}>{unit.unitNumber}</p>
           })}
         </LeftUnits>
         <RightUnits>
@@ -82,8 +87,8 @@ export default function Job({job, back}) {
         </RightUnits>
       </UnitContainer>
       <DeleteButton onClick={() => toggleDeletePopUp()}>Delete job</DeleteButton>
-      {showDeletePopUp ? 'show popup is set to: true' : 'show popup is set to: false'}
       {showDeletePopUp && <Confirm action={deleteJob} popUpToggle={toggleDeletePopUp}/>}
+      {showUnitPopUp && <Unit unit={showUnitPopUp} popUpToggle={toggleUnitPopUp}/>}
     </>
   )
 }
