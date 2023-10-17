@@ -36,12 +36,6 @@ const DeleteButton = styled.button`
 
 `
 
-const jobPlaceHolder = { //delete later when confirmed not needed
-  jobNumber: null,
-  unitsOnLeft: [1,2],
-  unitsOnRight: [1,2]
-}
-
 export default function Job({job, back}) {
   const [showDeletePopUp, setShowDeletePopUp] = useState(false)
 
