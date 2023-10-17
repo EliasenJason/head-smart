@@ -2,7 +2,7 @@ import styled from "styled-components"
 import Title from "../components/title"
 import Link from "next/link"
 import { useState, useEffect } from "react";
-import Job from "./maintenance/job";
+import Job from "../components/maintenance/job";
 
 const JobButton = styled.div`
   font-size: 1.5rem;

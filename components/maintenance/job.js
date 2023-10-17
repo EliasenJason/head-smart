@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import Title from "../../components/title"
+import Title from "../title"
 import Confirm from "./confirm"
 import { useState } from "react"
 import mongoose from "mongoose"
