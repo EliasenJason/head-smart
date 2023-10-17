@@ -16,31 +16,31 @@ export default function Maintenance() {
   const [loading, setLoading] = useState(true);
   const [selectedJob, setSelectedJob] = useState('')
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch('/api/getJobs');
-        if (response.ok) {
-          const data = await response.json();
-          setData(data);
-          setLoading(false);
-        } else {
-          console.error('Error fetching data:', response.statusText);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    }
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       const response = await fetch('/api/getJobs');
+  //       if (response.ok) {
+  //         const data = await response.json();
+  //         setData(data);
+  //         setLoading(false);
+  //       } else {
+  //         console.error('Error fetching data:', response.statusText);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching data:', error);
+  //     }
+  //   }
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
   return (
     <>
-      <Title backButtonHref={"/"} Text={'Maintenance'}/>
+    <p>work?</p>
+      {/* <Title backButtonHref={"/"} Text={'Maintenance'}/>
       {selectedJob ? (
-        // <Job job={selectedJob} back={setSelectedJob} />
-        <p>work? </p>
+        <Job job={selectedJob} back={setSelectedJob} />
       ) : (
       <>
       {loading ? (
@@ -58,7 +58,7 @@ export default function Maintenance() {
       )}
       <Link href="/maintenance/createjob"><button>Create New Job</button></Link>
       </>
-      )}
+      )} */}
     </>
   )
 }
