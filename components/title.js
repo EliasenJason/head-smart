@@ -1,8 +1,6 @@
 import styled from "styled-components";
 import Link from "next/link";
 
-const TitleContainer = styled.div`
-`
 const StyledTitle = styled.h1`
     margin: 0;
     margin-bottom: .5em;

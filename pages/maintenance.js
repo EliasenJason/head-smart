@@ -1,36 +1,63 @@
 import styled from "styled-components"
 import Title from "../components/title"
 import Link from "next/link"
+import { useState, useEffect } from "react";
+import Job from "./maintenance/job";
 
-const Notification = styled.div`
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+const JobButton = styled.div`
+  font-size: 1.5rem;
+  text-align: center;
+  border: solid black;
+  margin: 1em;
 `
 
 export default function Maintenance() {
-  
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedJob, setSelectedJob] = useState('')
 
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch('/api/getJobs');
+        if (response.ok) {
+          const data = await response.json();
+          setData(data);
+          setLoading(false);
+        } else {
+          console.error('Error fetching data:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
 
-  const handleClick = async () => {
-    console.log('hitting api')
-    const res = await fetch('/api/createJob', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      jobNumber: "FR-7000123"
-    })
-    })
-  }
+    fetchData();
+  }, []);
 
   return (
     <>
       <Title backButtonHref={"/"} Text={'Maintenance'}/>
-      <p>{process.env.NEXT_PUBLIC_GREETING}</p>
-      <button onClick={() => handleClick()}>test this</button>
+      {selectedJob ? (
+        <Job job={selectedJob} back={setSelectedJob} />
+      ) : (
+      <>
+      {loading ? (
+        <p>Loading Jobs...</p>
+      ): (
+        <div>
+            {data.map((item, index) => {
+              return (
+                <JobButton key={index} onClick={() => setSelectedJob(item)}>
+                    <p>{item.jobNumber}</p>
+                </JobButton>
+              )
+            })}
+        </div>
+      )}
+      <Link href="/maintenance/createjob"><button>Create New Job</button></Link>
+      </>
+      )}
     </>
   )
 }

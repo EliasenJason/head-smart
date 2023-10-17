@@ -11,12 +11,11 @@ export default async function createJob(req, res) {
 
     console.log('creating document')
     console.log(req.body)
-    let mongoResponse = await jobModel.create(req.body)
+    let mongoResponse = await jobModel.find({})
     console.log('created document')
     console.log(mongoResponse)
-    res.json({ mongoResponse })
+    res.status(200).json(mongoResponse)
   } catch(error) {
-    console.log(error)
-    res.json({error})
+    res.status(500).json({error: 'Error fetching data from the Database'})
   }
 }
