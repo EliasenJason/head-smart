@@ -49,8 +49,6 @@ export default function Job({job, back}) {
     showDeletePopUp ? setShowDeletePopUp(false) : setShowDeletePopUp(true)
   }
 
-  const router = useRouter()
-
   const deleteJob = async () => {
     try {
       const res = await fetch('/api/deleteJob', {
@@ -62,7 +60,7 @@ export default function Job({job, back}) {
       })
       if (res.ok) {
         console.log('job deleted')
-        window.location.reload();
+        
       } else {
         console.error('Error in deleting job:', res.statusText)
       }
