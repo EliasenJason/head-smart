@@ -1,5 +1,6 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import styled from "styled-components"
+import { useRouter } from "next/router"
 
 const PopUp = styled.div`
 background: rgba(0, 0, 0, 0.8);
@@ -84,24 +85,65 @@ grid-area: pack5;
 `
 
 export default function Unit({unit, popUpToggle}) {
-  const [packingState, setPackingState] = useState(unit)
+  const [unitState, setunitState] = useState(unit.unit)
 
   const handlePackingClick = (holeNumber) => {
-    if (packingState[`pack${holeNumber}`] === "green") {
-      setPackingState({...packingState, [`pack${holeNumber}`]: 'yellow'})
-    } else if (packingState[`pack${holeNumber}`] === "yellow") {
-      setPackingState({...packingState, [`pack${holeNumber}`]: 'red'})
-    } else if (packingState[`pack${holeNumber}`] === "red") {
-      setPackingState({...packingState, [`pack${holeNumber}`]: 'green'})
+    if (unitState[`pack${holeNumber}`] === "green") {
+      setunitState({...unitState, [`pack${holeNumber}`]: 'yellow'})
+    } else if (unitState[`pack${holeNumber}`] === "yellow") {
+      setunitState({...unitState, [`pack${holeNumber}`]: 'red'})
+    } else if (unitState[`pack${holeNumber}`] === "red") {
+      setunitState({...unitState, [`pack${holeNumber}`]: 'green'})
     }
-    console.log(packingState)
   }
 
-  // console.log(unit)
+  useEffect(() => {
+    console.log('old State:')
+    console.log(unit.unit)
+    console.log('new State')
+    console.log(unitState)
+    console.log(unit)
+  },[unitState])
+
+  const router = useRouter()
+  const updateConsumables = async () => {
+    try {
+      const res = await fetch('/api/updateUnit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          side: unit.side,
+          unitObject: unitState,
+          job: unit.job.jobNumber
+        })
+      })
+      if (res.ok) {
+        console.log('Unit Updated')
+        router.reload()
+      } else {
+        console.error('Error in deleting job:', res.statusText)
+      }
+    } catch (error) {
+      console.error('Error deleting job:', error)
+    }
+  }
+
+  const handleClose = () => {
+    if (unit.unit === unitState) {
+      console.log('no change')
+    } else {
+      console.log('there is a change, updating database')
+      updateConsumables()
+    }
+    popUpToggle()
+  }
+
   return (
     <PopUp>
       <PopUpContent>
-      <ExitButton onClick={() => popUpToggle()}>x</ExitButton>
+      <ExitButton onClick={() => handleClose()}>x</ExitButton>
       <GridContainer>
         <UnitNutNumber>{unit.unitNumber}</UnitNutNumber>
         <Hole1>1</Hole1>
@@ -110,11 +152,11 @@ export default function Unit({unit, popUpToggle}) {
         <Hole4>4</Hole4>
         <Hole5>5</Hole5>
         <Packing>Packing</Packing>
-        <PackingComponent gridArea="pack1" color={packingState.pack1} onClick={() => handlePackingClick(1)}></PackingComponent>
-        <PackingComponent gridArea="pack2" color={packingState.pack2} onClick={() => handlePackingClick(2)}></PackingComponent>
-        <PackingComponent gridArea="pack3" color={packingState.pack3} onClick={() => handlePackingClick(3)}></PackingComponent>
-        <PackingComponent gridArea="pack4" color={packingState.pack4} onClick={() => handlePackingClick(4)}></PackingComponent>
-        <PackingComponent gridArea="pack5" color={packingState.pack5} onClick={() => handlePackingClick(5)}></PackingComponent>
+        <PackingComponent gridArea="pack1" color={unitState.pack1} onClick={() => handlePackingClick(1)}></PackingComponent>
+        <PackingComponent gridArea="pack2" color={unitState.pack2} onClick={() => handlePackingClick(2)}></PackingComponent>
+        <PackingComponent gridArea="pack3" color={unitState.pack3} onClick={() => handlePackingClick(3)}></PackingComponent>
+        <PackingComponent gridArea="pack4" color={unitState.pack4} onClick={() => handlePackingClick(4)}></PackingComponent>
+        <PackingComponent gridArea="pack5" color={unitState.pack5} onClick={() => handlePackingClick(5)}></PackingComponent>
       </GridContainer>
       
       </PopUpContent>

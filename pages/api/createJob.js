@@ -5,6 +5,7 @@ import jobModel from "../../lib/schemas/Job"
 
 export default async function createJob(req, res) {
   try {
+    console.log('createJob Route triggered')
     console.log('connecting to mongo')
     await connectMongo()
     console.log('connected to mongo')

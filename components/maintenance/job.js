@@ -76,13 +76,13 @@ export default function Job({job, back}) {
         <LeftUnits>
         <h3>Left</h3>
           {job.unitsOnLeft.map((unit, index) => {
-            return <p key={index} onClick={() => setShowUnitPopUp(unit)}>{unit.unitNumber}</p>
+            return <p key={index} onClick={() => setShowUnitPopUp({unit, side: 'left', job})}>{unit.unitNumber}</p>
           })}
         </LeftUnits>
         <RightUnits>
           <h3>Right</h3>
         {job.unitsOnRight.map((unit, index) => {
-            return <p key={index} onClick={() => setShowUnitPopUp(unit)}>{unit.unitNumber}</p>
+            return <p key={index} onClick={() => setShowUnitPopUp({unit, side: 'right', job})}>{unit.unitNumber}</p>
           })}
         </RightUnits>
       </UnitContainer>

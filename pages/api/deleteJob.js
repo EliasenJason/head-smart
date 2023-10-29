@@ -5,6 +5,7 @@ import jobModel from "../../lib/schemas/Job"
 
 export default async function deleteJob(req, res) {
   try {
+    console.log('deleteJob route triggered')
     console.log('connecting to mongo')
     await connectMongo()
     console.log('connected to mongo')
