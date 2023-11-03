@@ -3,6 +3,7 @@ import Title from "../components/title"
 import Link from "next/link"
 import { useState, useEffect } from "react";
 import Job from "../components/maintenance/job";
+import { useRouter } from "next/router";
 
 const JobButton = styled.div`
   font-size: 1.5rem;
@@ -36,32 +37,27 @@ export default function Maintenance() {
     fetchData();
   }, []);
 
+  const router = useRouter()
+
+  const navigateToJob = (jobNumber) => {
+    router.push(`/maintenance/${jobNumber}`)
+  }
+
   return (
     <>
       <Title backButtonHref={"/"} Text={'Maintenance'}/>
-      {selectedJob ? (
-        <Job job={selectedJob} back={setSelectedJob} />
-      ) : (
-      <>
       {loading ? (
         <p>Loading Jobs...</p>
       ): (
         <div>
             {data.map((item, index) => {
               return (
-                <Link key={index} href={'maintenance/'+item.jobNumber} job={item}>
-                  <JobButton>{item.jobNumber}</JobButton>
-                </Link>
-                // <JobButton key={index} onClick={() => setSelectedJob(item)}>
-                //     <p>{item.jobNumber}</p>
-                // </JobButton>
+                <button key={index} onClick={() => navigateToJob(item.jobNumber)}>{item.jobNumber}</button>
               )
             })}
         </div>
       )}
       <Link href="/maintenance/createjob"><button>Create New Job</button></Link>
-      </>
-      )}
     </>
   )
 }
