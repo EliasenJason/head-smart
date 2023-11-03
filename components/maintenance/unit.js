@@ -99,10 +99,9 @@ export default function Unit({unit, popUpToggle}) {
 
   useEffect(() => {
     console.log('old State:')
-    console.log(unit.unit)
+    console.log(unit)
     console.log('new State')
     console.log(unitState)
-    console.log(unit)
   },[unitState])
 
   const router = useRouter()
@@ -121,7 +120,9 @@ export default function Unit({unit, popUpToggle}) {
       })
       if (res.ok) {
         console.log('Unit Updated')
-        router.reload()
+        const response = await res.json()
+        console.log(response.mongoResponse)
+        //router.reload()
       } else {
         console.error('Error in deleting job:', res.statusText)
       }

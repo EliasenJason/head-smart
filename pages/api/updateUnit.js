@@ -4,8 +4,6 @@ import jobModel from "../../lib/schemas/Job"
 //request body must have a job number
 
 export default async function updateUnit(req, res) {
-  //req.side = 'left' or 'right'
-  //req.unit = {unitNumber: Number, pack1: 'red'}
   let side
   if (req.body.side === "left") {
     side = "unitsOnLeft"
@@ -31,8 +29,8 @@ export default async function updateUnit(req, res) {
 
     console.log('updating document')
     console.log('updateunit triggered')
-    let mongoResponse = await jobModel.findOneAndUpdate(filter, update)
-    console.log('created document')
+    let mongoResponse = await jobModel.findOneAndUpdate(filter, update, {new: true})
+    console.log('updated document')
     console.log(mongoResponse)
     res.json({ mongoResponse })
   } catch(error) {

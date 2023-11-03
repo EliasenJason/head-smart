@@ -22,6 +22,7 @@ export default function Maintenance() {
         const response = await fetch('/api/getJobs');
         if (response.ok) {
           const data = await response.json();
+          console.log(data)
           setData(data);
           setLoading(false);
         } else {
@@ -48,9 +49,12 @@ export default function Maintenance() {
         <div>
             {data.map((item, index) => {
               return (
-                <JobButton key={index} onClick={() => setSelectedJob(item)}>
-                    <p>{item.jobNumber}</p>
-                </JobButton>
+                <Link key={index} href={'maintenance/'+item.jobNumber} job={item}>
+                  <JobButton>{item.jobNumber}</JobButton>
+                </Link>
+                // <JobButton key={index} onClick={() => setSelectedJob(item)}>
+                //     <p>{item.jobNumber}</p>
+                // </JobButton>
               )
             })}
         </div>
