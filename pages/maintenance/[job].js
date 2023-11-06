@@ -1,10 +1,10 @@
-//TODO after deleting a job need to go back to main maintenance page and refresh to see changes
-
-import styled from "styled-components"
-import Confirm from "./confirm"
-import Unit from "./unit"
-import { useState } from "react"
-import { useRouter } from "next/router"
+import connectMongo from '../../lib/mongodb';
+import jobModel from '../../lib/schemas/Job';
+import styled from 'styled-components';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+import Unit from '../../components/maintenance/unit';
+import Confirm from '../../components/maintenance/confirm';
 
 const JobNumberContainer = styled.div`
   width: 100%;
@@ -37,11 +37,12 @@ const DeleteButton = styled.button`
 
 `
 
-export default function Job({job, back}) {
+export default function JobDetail({ jobData }) {
   const [showDeletePopUp, setShowDeletePopUp] = useState(false)
   const [showUnitPopUp, setShowUnitPopUp] = useState('')
-
+  
   const router = useRouter()
+
   const toggleDeletePopUp = () => {
     showDeletePopUp ? setShowDeletePopUp(false) : setShowDeletePopUp(true)
   }
@@ -68,27 +69,61 @@ export default function Job({job, back}) {
       console.error('Error deleting job:', error)
     }
   }
-  return (
-    <>
+
+  if (jobData === "ERROR") {
+    return (
+      <h2>ERROR fetching Data Check network connection and try again</h2>
+    )
+  } else {
+    return (
+      <>
       <button onClick={() => back()}>go back</button>
-      <JobNumberContainer>{job.jobNumber}</JobNumberContainer>
+      <JobNumberContainer>{jobData.jobNumber}</JobNumberContainer>
       <UnitContainer>
         <LeftUnits>
         <h3>Left</h3>
-          {job.unitsOnLeft.map((unit, index) => {
-            return <p key={index} onClick={() => setShowUnitPopUp({unit, side: 'left', job})}>{unit.unitNumber}</p>
+          {jobData.unitsOnLeft.map((unit, index) => {
+            return <p key={index} onClick={() => setShowUnitPopUp({unit, jobData, side:'left'})}>{unit.unitNumber}</p>
           })}
         </LeftUnits>
         <RightUnits>
           <h3>Right</h3>
-        {job.unitsOnRight.map((unit, index) => {
-            return <p key={index} onClick={() => setShowUnitPopUp({unit, side: 'right', job})}>{unit.unitNumber}</p>
+        {jobData.unitsOnRight.map((unit, index) => {
+            return <p key={index} onClick={() => setShowUnitPopUp({unit, jobData, side:'right'})}>{unit.unitNumber}</p>
           })}
         </RightUnits>
       </UnitContainer>
       <DeleteButton onClick={() => toggleDeletePopUp()}>Delete job</DeleteButton>
       {showDeletePopUp && <Confirm action={deleteJob} popUpToggle={toggleDeletePopUp}/>}
-      {showUnitPopUp && <Unit unit={showUnitPopUp} popUpToggle={toggleUnitPopUp}/>}
+      {showUnitPopUp && <Unit unitAndJob={showUnitPopUp} popUpToggle={toggleUnitPopUp}/>}
     </>
-  )
+    );
+  }
+  
+}
+
+export async function getServerSideProps(context) {
+  const number = context.params.job;
+  const query = {jobNumber: number}
+  let jobData
+  // Make an API request to fetch job data based on the job number
+  try {
+    console.log('getJob route triggered')
+    console.log('connecting to mongo')
+    await connectMongo()
+    console.log('connected to mongo')
+
+    console.log('requesting data')
+    const response = await jobModel.findOne(query)
+    jobData = JSON.parse(JSON.stringify(response))
+    console.log('data received')
+  } catch(error) {
+    console.log('there has been an error!')
+    jobData = 'ERROR'
+  }
+  return {
+    props: {
+      jobData,
+    },
+  };
 }

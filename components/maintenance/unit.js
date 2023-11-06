@@ -84,8 +84,8 @@ const Pack5  = styled.div`
 grid-area: pack5; 
 `
 
-export default function Unit({unit, popUpToggle}) {
-  const [unitState, setunitState] = useState(unit.unit)
+export default function Unit({unitAndJob, popUpToggle}) {
+  const [unitState, setunitState] = useState(unitAndJob.unit)
 
   const handlePackingClick = (holeNumber) => {
     if (unitState[`pack${holeNumber}`] === "green") {
@@ -97,15 +97,9 @@ export default function Unit({unit, popUpToggle}) {
     }
   }
 
-  useEffect(() => {
-    console.log('old State:')
-    console.log(unit.unit)
-    console.log('new State')
-    console.log(unitState)
-    console.log(unit)
-  },[unitState])
-
   const router = useRouter()
+
+  //if the unitState has changed than this fires:
   const updateConsumables = async () => {
     try {
       const res = await fetch('/api/updateUnit', {
@@ -114,28 +108,31 @@ export default function Unit({unit, popUpToggle}) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          side: unit.side,
+          side: unitAndJob.side,
           unitObject: unitState,
-          job: unit.job.jobNumber
+          job: unitAndJob.jobData.jobNumber
         })
       })
       if (res.ok) {
         console.log('Unit Updated')
+        const response = await res.json()
+        console.log(response.mongoResponse)
         router.reload()
       } else {
-        console.error('Error in deleting job:', res.statusText)
+        console.error('Error in updating unit:', res.statusText)
       }
     } catch (error) {
-      console.error('Error deleting job:', error)
+      console.error('Error updating unit:', error)
     }
   }
-
+  //this closes the popup and checks if any changes were made
   const handleClose = () => {
-    if (unit.unit === unitState) {
+    if (unitAndJob.unit === unitState) {
       console.log('no change')
     } else {
       console.log('there is a change, updating database')
       updateConsumables()
+      router.reload()
     }
     popUpToggle()
   }
@@ -145,7 +142,7 @@ export default function Unit({unit, popUpToggle}) {
       <PopUpContent>
       <ExitButton onClick={() => handleClose()}>x</ExitButton>
       <GridContainer>
-        <UnitNutNumber>{unit.unitNumber}</UnitNutNumber>
+        <UnitNutNumber>{unitAndJob.unitNumber}</UnitNutNumber>
         <Hole1>1</Hole1>
         <Hole2>2</Hole2>
         <Hole3>3</Hole3>
