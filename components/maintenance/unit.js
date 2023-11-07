@@ -113,7 +113,7 @@ export default function Unit({unitAndJob, popUpToggle}) {
         console.log('Unit Updated')
         const response = await res.json()
         console.log(response.mongoResponse)
-        // router.reload()
+        router.reload()
       } else {
         console.error('Error in updating unit:', res.statusText)
       }
