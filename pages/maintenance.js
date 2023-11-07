@@ -4,6 +4,46 @@ import Link from "next/link"
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
+const Container = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+`;
+
+const JobList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const JobButton = styled.button`
+  background-color: #007BFF;
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const CreateJobButton = styled.button`
+  background-color: #28a745;
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #1f8333;
+  }
+`;
+
 export default function Maintenance() {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
@@ -35,20 +75,20 @@ export default function Maintenance() {
   }
 
   return (
-    <>
+    <Container>
       <Title backButtonHref={"/"} Text={'Maintenance'}/>
       {loading ? (
         <p>Loading Jobs...</p>
       ): (
-        <div>
+        <JobList>
             {data.map((item, index) => {
               return (
-                <button key={index} onClick={() => navigateToJob(item.jobNumber)}>{item.jobNumber}</button>
+                <JobButton key={index} onClick={() => navigateToJob(item.jobNumber)}>{item.jobNumber}</JobButton>
               )
             })}
-        </div>
+        </JobList>
       )}
-      <Link href="/maintenance/createjob"><button>Create New Job</button></Link>
-    </>
+      <Link href="/maintenance/createjob"><CreateJobButton>Create New Job</CreateJobButton></Link>
+    </Container>
   )
 }

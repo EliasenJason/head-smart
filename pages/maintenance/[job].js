@@ -5,13 +5,15 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Unit from '../../components/maintenance/unit';
 import Confirm from '../../components/maintenance/confirm';
+import checkForIssues from '../../lib/checks/checkForIssues';
+import UnitDisplay from '../../components/maintenance/unitDisplay';
 
 const JobNumberContainer = styled.div`
   width: 100%;
   font-size: 2em;
   text-align: center;
 `
-const UnitContainer = styled.div`
+const UnitsContainer = styled.div`
   width: 100%;
   display:flex;
   flex-direction: row ;
@@ -23,6 +25,8 @@ const LeftUnits = styled.div`
   flex-direction: column;
   justify-content: Start;
   align-items: center;
+  gap: 1em;
+  margin: 1em;
 `
 
 const RightUnits = styled.div`
@@ -31,6 +35,8 @@ const RightUnits = styled.div`
   flex-direction: column;
   justify-content: start;
   align-items: center;
+  gap: 1em;
+  margin: 1em;
 `
 
 const DeleteButton = styled.button`
@@ -48,6 +54,10 @@ export default function JobDetail({ jobData }) {
   }
   const toggleUnitPopUp = () => {
     showUnitPopUp && setShowUnitPopUp('')
+  }
+
+  const back = () => {
+    router.push('/maintenance')
   }
 
   const deleteJob = async () => {
@@ -79,20 +89,34 @@ export default function JobDetail({ jobData }) {
       <>
       <button onClick={() => back()}>go back</button>
       <JobNumberContainer>{jobData.jobNumber}</JobNumberContainer>
-      <UnitContainer>
+      <UnitsContainer>
         <LeftUnits>
         <h3>Left</h3>
           {jobData.unitsOnLeft.map((unit, index) => {
-            return <p key={index} onClick={() => setShowUnitPopUp({unit, jobData, side:'left'})}>{unit.unitNumber}</p>
+            return (
+              <UnitDisplay 
+                  key={index}
+                  onClick={() => setShowUnitPopUp({unit, jobData, side:'right'})}
+                  unitNumber={unit.unitNumber} 
+                  elements={checkForIssues(unit)} 
+                />
+            )
           })}
         </LeftUnits>
         <RightUnits>
           <h3>Right</h3>
         {jobData.unitsOnRight.map((unit, index) => {
-            return <p key={index} onClick={() => setShowUnitPopUp({unit, jobData, side:'right'})}>{unit.unitNumber}</p>
+            return (
+                <UnitDisplay 
+                  key={index}
+                  onClick={() => setShowUnitPopUp({unit, jobData, side:'right'})}
+                  unitNumber={unit.unitNumber} 
+                  elements={checkForIssues(unit)} 
+                />
+            )
           })}
         </RightUnits>
-      </UnitContainer>
+      </UnitsContainer>
       <DeleteButton onClick={() => toggleDeletePopUp()}>Delete job</DeleteButton>
       {showDeletePopUp && <Confirm action={deleteJob} popUpToggle={toggleDeletePopUp}/>}
       {showUnitPopUp && <Unit unitAndJob={showUnitPopUp} popUpToggle={toggleUnitPopUp}/>}

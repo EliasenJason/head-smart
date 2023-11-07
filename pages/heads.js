@@ -6,10 +6,11 @@ import Link from 'next/link';
 
 const StyledContainer = styled.div`
   display: grid; 
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr;
   grid-template-areas:
   "Title Title Title Title"
   ;
+  width: 100%;
   background-color: #363534;
 `
 const StyledHeadButton = styled.a`

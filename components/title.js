@@ -1,25 +1,39 @@
-import styled from "styled-components";
-import Link from "next/link";
+import styled from 'styled-components';
 
-const StyledTitle = styled.h1`
-    margin: 0;
-    margin-bottom: .5em;
-    font-size: 3rem;
-    font-family: 'Maven Pro', sans-serif;
-    grid-area: Title;
-    background: red;
-    text-align: center;
-    background-color: rgb(243, 242, 241);
-  ` 
-  const BackButton = styled.button`
-    position: absolute;
-    aspect-ratio: 1/1;
-  `
+const TitleContainer = styled.div`
+  background-color: #343a40;
+  color: #fff;
+  padding: 20px;
+  width: 100%;
+`;
 
-export default function Title({backButtonHref, Text}) {
+const TitleText = styled.h1`
+  font-size: 24px;
+  margin: 0;
+  text-align: center;
+`;
+
+const BackButton = styled.a`
+  background-color: #007BFF;
+  color: #fff;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 14px;
+  font-weight: 600;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+export default function Title({ backButtonHref, Text }) {
   return (
-    <>
-    <BackButton><Link href={backButtonHref}>Back</Link></BackButton><StyledTitle>{Text}</StyledTitle>
-    </>
-  )
-};
+    <TitleContainer>
+      <BackButton href={backButtonHref}>Back</BackButton>
+      <TitleText>{Text}</TitleText>
+    </TitleContainer>
+  );
+}

@@ -71,21 +71,11 @@ const PackingComponent = styled.button`
 grid-area: ${props => props.gridArea};
 background-color: ${props => props.color};
 `
-const Pack2  = styled.div`
-grid-area: pack2; 
-`
-const Pack3  = styled.div`
-grid-area: pack3; 
-`
-const Pack4  = styled.div`
-grid-area: pack4; 
-`
-const Pack5  = styled.div`
-grid-area: pack5; 
-`
 
 export default function Unit({unitAndJob, popUpToggle}) {
   const [unitState, setunitState] = useState(unitAndJob.unit)
+  
+  console.log(unitState)
 
   const handlePackingClick = (holeNumber) => {
     if (unitState[`pack${holeNumber}`] === "green") {
@@ -101,6 +91,8 @@ export default function Unit({unitAndJob, popUpToggle}) {
 
   //if the unitState has changed than this fires:
   const updateConsumables = async () => {
+    console.log('this is getting sent to the backend:')
+    console.log(unitState)
     try {
       const res = await fetch('/api/updateUnit', {
         method: 'POST',
@@ -129,12 +121,11 @@ export default function Unit({unitAndJob, popUpToggle}) {
   const handleClose = () => {
     if (unitAndJob.unit === unitState) {
       console.log('no change')
+      popUpToggle()
     } else {
       console.log('there is a change, updating database')
       updateConsumables()
-      router.reload()
     }
-    popUpToggle()
   }
 
   return (
@@ -142,7 +133,7 @@ export default function Unit({unitAndJob, popUpToggle}) {
       <PopUpContent>
       <ExitButton onClick={() => handleClose()}>x</ExitButton>
       <GridContainer>
-        <UnitNutNumber>{unitAndJob.unitNumber}</UnitNutNumber>
+        <UnitNutNumber>{unitState.unitNumber}</UnitNutNumber>
         <Hole1>1</Hole1>
         <Hole2>2</Hole2>
         <Hole3>3</Hole3>
