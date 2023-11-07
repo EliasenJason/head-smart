@@ -96,7 +96,7 @@ export default function JobDetail({ jobData }) {
             return (
               <UnitDisplay 
                   key={index}
-                  onClick={() => setShowUnitPopUp({unit, jobData, side:'right'})}
+                  onClick={() => setShowUnitPopUp({unit, jobData, side:'left'})}
                   unitNumber={unit.unitNumber} 
                   elements={checkForIssues(unit)} 
                 />

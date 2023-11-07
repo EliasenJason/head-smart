@@ -93,6 +93,10 @@ export default function Unit({unitAndJob, popUpToggle}) {
   const updateConsumables = async () => {
     console.log('this is getting sent to the backend:')
     console.log(unitState)
+    console.log('this is the unitAndJob initial state:')
+    console.log(unitAndJob)
+    console.log('this is the side:')
+    console.log(unitAndJob.side)
     try {
       const res = await fetch('/api/updateUnit', {
         method: 'POST',
@@ -109,7 +113,7 @@ export default function Unit({unitAndJob, popUpToggle}) {
         console.log('Unit Updated')
         const response = await res.json()
         console.log(response.mongoResponse)
-        router.reload()
+        // router.reload()
       } else {
         console.error('Error in updating unit:', res.statusText)
       }
