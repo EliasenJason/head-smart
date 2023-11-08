@@ -10,8 +10,13 @@ import UnitDisplay from '../../components/maintenance/unitDisplay';
 
 const JobNumberContainer = styled.div`
   width: 100%;
-  font-size: 2em;
   text-align: center;
+  background-color: #343a40;
+  color: #fff;
+  padding: 10px 0;
+  font-size: 24px;
+  border-radius: 5px;
+  margin: 20px 0;
 `
 const UnitsContainer = styled.div`
   width: 100%;
@@ -38,6 +43,21 @@ const RightUnits = styled.div`
   gap: 1em;
   margin: 1em;
 `
+const ActionButton = styled.button`
+  background-color: #007BFF;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 16px;
+  font-weight: 600;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
 
 const DeleteButton = styled.button`
 
@@ -87,7 +107,7 @@ export default function JobDetail({ jobData }) {
   } else {
     return (
       <>
-      <button onClick={() => back()}>go back</button>
+      <ActionButton onClick={() => back()}>go back</ActionButton>
       <JobNumberContainer>{jobData.jobNumber}</JobNumberContainer>
       <UnitsContainer>
         <LeftUnits>
@@ -117,7 +137,7 @@ export default function JobDetail({ jobData }) {
           })}
         </RightUnits>
       </UnitsContainer>
-      <DeleteButton onClick={() => toggleDeletePopUp()}>Delete job</DeleteButton>
+      <ActionButton onClick={() => toggleDeletePopUp()}>Delete job</ActionButton>
       {showDeletePopUp && <Confirm action={deleteJob} popUpToggle={toggleDeletePopUp}/>}
       {showUnitPopUp && <Unit unitAndJob={showUnitPopUp} popUpToggle={toggleUnitPopUp}/>}
     </>
