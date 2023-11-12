@@ -1,11 +1,10 @@
 import connectMongo from "../../../lib/mongodb";
-import unitModel from "../../../lib/schemas/maintenance/unitSchema";
+import jobModel from "../../../lib/schemas/maintenance/jobSchema";
 
-export default async function createUnit(req, res) {
+export default async function createJob(req, res) {
   try {
-    
     await connectMongo()
-    let mongoResponse = await unitModel.create(
+    let mongoResponse = await jobModel.create(
       req.body
     )
     console.log(mongoResponse)

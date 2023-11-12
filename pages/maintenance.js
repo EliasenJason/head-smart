@@ -48,8 +48,12 @@ const CreateJobButton = styled.button`
 export default function Maintenance() {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
-
+  const [job, setJob] = useState({})
   //load data from database and put in state
+
+  useEffect(() => {
+    console.log(job)
+  },[job])
   const createUnit = async function() {
     try {
       const res = await fetch('/api/maintenance/createUnit', {
@@ -57,11 +61,36 @@ export default function Maintenance() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(createEmptyUnit(620227, 'quintuplex'))
+        body: JSON.stringify(createEmptyUnit(620111, 'quintuplex'))
       })
       if (res.ok) {
         console.log('great success!')
         console.log(res)
+      } else {
+        console.error('Error submitting data:', res.statusText)
+      }
+    } catch (error) {
+      console.error('Error submitting data:', error)
+    }
+  }
+  const createJob = async function() {
+    try {
+      const res = await fetch('/api/maintenance/createJob', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          jobNumber: 'FR-7000111',
+          createdBy: 'Jason',
+          unitsOnLeft: [{unit: '655023b735f97daf9766089f'}, {unit: '6550535d35f97daf976608ce'}],
+          unitsOnRight: [{unit: '6550536335f97daf976608fd'}]
+        })
+      })
+      if (res.ok) {
+        const data = await res.json()
+        console.log('great success!')
+        setJob(data.mongoResponse)
       } else {
         console.error('Error submitting data:', res.statusText)
       }
@@ -84,6 +113,7 @@ export default function Maintenance() {
             })} */}
         </JobList>
       )}
+      <CreateJobButton onClick={() => createJob()}>Create Job</CreateJobButton>
       <CreateJobButton onClick={() => createUnit()}>Create Unit</CreateJobButton>
       <Link href="/maintenance/createjob"><CreateJobButton>Create New Job</CreateJobButton></Link>
     </Container>
