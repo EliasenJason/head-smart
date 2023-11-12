@@ -74,46 +74,13 @@ export default function CreateJob() {
   }
 
   const createJob = async () => {
-    const unitsToFitSchema = (arrayOfUnitNumbers) => {
-      const units = arrayOfUnitNumbers.map(unit => {
-        return {
-          unitNumber: unit,
-          pack1: 'green',
-          pack2: 'green',
-          pack3: 'green',
-          pack4: 'green',
-          pack5: 'green'
-        }
-      })
-      return units
-    }
-    const createJobData = {
-      jobNumber: jobNumber,
-      unitsOnLeft: unitsToFitSchema(leftInputValues),
-      unitsOnRight: unitsToFitSchema(rightInputValues)
-    }
-    console.log(createJobData)
-    try {
-      const res = await fetch('/api/createJob', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(createJobData)
-      })
-      if (res.ok) {
-        setIsDataSubmitted(true)
-      } else {
-        console.error('Error submitting data:', res.statusText)
-      }
-    } catch (error) {
-      console.error('Error submitting data:', error)
-    }
+  //1. need to add units that aren't already in the database
+  //2. create the job with the references to the units
   }
 
   return (
     <>
-    <Title backButtonHref="/" Text="Create Job" />
+    <Title backButtonHref="/maintenance" Text="Create Job" />
       
         {isDataSubmitted ? (
           <>
