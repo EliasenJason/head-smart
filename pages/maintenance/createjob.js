@@ -108,6 +108,8 @@ export default function CreateJob() {
   }
 
   const createJob = async () => {
+  //TODO setup checks to see if the same unit is used multiple times and display error
+
   //1. need to add units that aren't already in the database
   let units = [...new Set([...leftInputValues,...rightInputValues])]
   units.forEach((unitNumber, index) => units[index] = createEmptyUnit(unitNumber))
@@ -130,13 +132,23 @@ export default function CreateJob() {
   }
   //2. create the job with the references to the units
   console.log('creating job')
+  let arrayOfLeftUnitObjects = leftInputValues.map((item) => {
+    return {unit: item}
+  })
+  let arrayOfRightUnitObjects = rightInputValues.map((item) => {
+    return {unit: item}
+  })
   try {
     const res = await fetch('/api/maintenance/createJob', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify()
+      body: JSON.stringify({
+        jobNumber: jobNumber,
+        unitsOnLeft: arrayOfLeftUnitObjects,
+        unitsOnRight: arrayOfRightUnitObjects
+      })
     })
     if (res.ok) {
       console.log('job created')
