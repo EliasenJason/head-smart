@@ -23,24 +23,15 @@ const PumpNumberInputContainer = styled.div`
   margin-bottom: 20px;
 `;
 
-const LeftInput = styled.div`
+const Input = styled.div`
   display: flex;
-  margin: 0.5em;
+  margin: .5em;
   flex: 1;
   justify-content: center;
+  
   input {
     border: solid black 1px;
-  }
-`;
-
-
-const RightInput = styled.div`
-  display: flex;
-  margin: 0.5em;
-  flex: 1;
-  justify-content: center;
-  input {
-    border: solid black 1px;
+    margin-bottom: .5em;
   }
 `;
 
@@ -177,7 +168,7 @@ export default function CreateJob() {
           <input type="text" onChange={handleJobNumberChange} />
           <Header>Blender</Header>
           <PumpNumberInputContainer>
-            <LeftInput>
+            <Input>
                 <form>
                   {leftInputValues.map((value, index) => (
                     <div key={index}>
@@ -196,8 +187,8 @@ export default function CreateJob() {
                 </button>
               </form>
                 
-              </LeftInput>
-              <RightInput>
+              </Input>
+              <Input>
               <form>
                   {rightInputValues.map((value, index) => (
                     <div key={index}>
@@ -215,7 +206,7 @@ export default function CreateJob() {
                   Remove Input
                 </button>
               </form>
-              </RightInput>
+              </Input>
           </PumpNumberInputContainer>
           <Header>Wellhead</Header>
 

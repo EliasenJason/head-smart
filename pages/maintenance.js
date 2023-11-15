@@ -3,6 +3,7 @@ import Title from "../components/title"
 import Link from "next/link"
 import jobModel from "../lib/schemas/maintenance/jobSchema";
 import connectMongo from "../lib/mongodb";
+import { useRouter } from "next/router";
 
 const Container = styled.div`
   max-width: 800px;
@@ -45,7 +46,11 @@ const ActionButton = styled.button`
 `;
 
 export default function Maintenance({data}) {
+  const router = useRouter()
 
+  const navigateToJob = (jobNumber) => {
+    router.push(`/maintenance/${jobNumber}`)
+  }
   return (
     <Container>
       <Title backButtonHref={"/maintenance"} Text={'Maintenance'}/>
