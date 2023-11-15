@@ -63,7 +63,8 @@ export default function JobDetail({ job }) {
   const [showDeletePopUp, setShowDeletePopUp] = useState(false)
   const [showUnitPopUp, setShowUnitPopUp] = useState('')
   
-  console.log(job)
+  job.unitsOnLeft.forEach((unit,index) => console.log(`left unit #${index}= ${unit.number}`))
+  job.unitsOnRight.forEach((unit,index) => console.log(`right unit #${index}= ${unit.number}`))
   const router = useRouter()
 
   const toggleDeletePopUp = () => {
@@ -79,12 +80,14 @@ export default function JobDetail({ job }) {
     return (
       <>
       <ActionButton onClick={() => back()}>go back</ActionButton>
-      {/* <JobNumberContainer>{jobData.jobNumber}</JobNumberContainer> */}
+      <JobNumberContainer>{job.jobNumber}</JobNumberContainer>
       <UnitsContainer>
         <LeftUnits>
         <h3>Left</h3>
-          {/* {jobData.unitsOnLeft.map((unit, index) => {
+          {/* {job.unitsOnLeft.map((unit, index) => {
+            console.log(item)
             return (
+              <p>{unit.number}</p>
               // <UnitDisplay 
               //     key={index}
               //     onClick={() => setShowUnitPopUp({unit, jobData, side:'left'})}
@@ -131,9 +134,11 @@ export async function getServerSideProps(context) {
       .populate({
         path: 'unitsOnLeft.unit unitsOnRight.unit',
         model: unitModel,
-        foreignField: 'number'
+        foreignField: 'number',
         })
       .exec()
+    job.unitsOnLeft = job.unitsOnLeft.map(entry => entry.unit);
+    job.unitsOnRight = job.unitsOnRight.map(entry => entry.unit);
       console.log('*')
       console.log(job)
     console.log('data received')
