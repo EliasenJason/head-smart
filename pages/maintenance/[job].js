@@ -2,11 +2,11 @@ import connectMongo from '../../lib/mongodb';
 import styled from 'styled-components';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import Unit from '../../components/maintenance/unit';
 import Confirm from '../../components/maintenance/confirm';
 import UnitDisplay from '../../components/maintenance/unitDisplay';
 import jobModel from '../../lib/schemas/maintenance/jobSchema';
 import unitModel from '../../lib/schemas/maintenance/unitSchema';
+import checkForIssues from '../../lib/checks/checkForIssues';
 
 const JobNumberContainer = styled.div`
   width: 100%;
@@ -61,10 +61,7 @@ const ActionButton = styled.button`
 
 export default function JobDetail({ job }) {
   const [showDeletePopUp, setShowDeletePopUp] = useState(false)
-  const [showUnitPopUp, setShowUnitPopUp] = useState('')
   
-  job.unitsOnLeft.forEach((unit,index) => console.log(`left unit #${index}= ${unit.number}`))
-  job.unitsOnRight.forEach((unit,index) => console.log(`right unit #${index}= ${unit.number}`))
   const router = useRouter()
 
   const toggleDeletePopUp = () => {
@@ -84,34 +81,37 @@ export default function JobDetail({ job }) {
       <UnitsContainer>
         <LeftUnits>
         <h3>Left</h3>
-          {/* {job.unitsOnLeft.map((unit, index) => {
-            console.log(item)
+          {job.unitsOnLeft.map((unit, index) => {
             return (
-              <p>{unit.number}</p>
-              // <UnitDisplay 
-              //     key={index}
-              //     onClick={() => setShowUnitPopUp({unit, jobData, side:'left'})}
-              //     unitNumber={unit.unitNumber}  
-              //   />
+              <UnitDisplay 
+                  key={index}
+                  onClick={() => {
+                    router.push(`/maintenance/${job.jobNumber}/${unit.number}`)
+                  }}
+                  elements={checkForIssues(unit)} 
+                  unitNumber={unit.number}  
+                />
             )
-          })} */}
+          })}
         </LeftUnits>
         <RightUnits>
           <h3>Right</h3>
-        {/* {jobData.unitsOnRight.map((unit, index) => {
+        {job.unitsOnRight.map((unit, index) => {
             return (
-                // <UnitDisplay 
-                //   key={index}
-                //   onClick={() => setShowUnitPopUp({unit, jobData, side:'right'})}
-                //   unitNumber={unit.unitNumber} 
-                // />
+                <UnitDisplay 
+                  key={index}
+                  elements={checkForIssues(unit)} 
+                  onClick={() => {
+                    router.push(`/maintenance/${job.jobNumber}/${unit.number}`)
+                  }}
+                  unitNumber={unit.number} 
+                />
             )
-          })} */}
+          })}
         </RightUnits>
       </UnitsContainer>
       <ActionButton onClick={() => toggleDeletePopUp()}>Delete job</ActionButton>
       {showDeletePopUp && <Confirm action={deleteJob} popUpToggle={toggleDeletePopUp}/>}
-      {showUnitPopUp && <Unit unitAndJob={showUnitPopUp} popUpToggle={toggleUnitPopUp}/>}
     </>
     );
   }

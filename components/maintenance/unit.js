@@ -72,8 +72,8 @@ grid-area: ${props => props.gridArea};
 background-color: ${props => props.color};
 `
 
-export default function Unit({unitAndJob, popUpToggle}) {
-  const [unitState, setunitState] = useState(unitAndJob.unit)
+export default function Unit({unit, popUpToggle}) {
+  const [unitState, setunitState] = useState(unit.unit)
   
   console.log(unitState)
 
@@ -87,43 +87,43 @@ export default function Unit({unitAndJob, popUpToggle}) {
     }
   }
 
-  const router = useRouter()
+  
 
   //if the unitState has changed than this fires:
-  const updateConsumables = async () => {
-    console.log('this is getting sent to the backend:')
-    console.log(unitState)
-    console.log('this is the unitAndJob initial state:')
-    console.log(unitAndJob)
-    console.log('this is the side:')
-    console.log(unitAndJob.side)
-    try {
-      const res = await fetch('/api/updateUnit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          side: unitAndJob.side,
-          unitObject: unitState,
-          job: unitAndJob.jobData.jobNumber
-        })
-      })
-      if (res.ok) {
-        console.log('Unit Updated')
-        const response = await res.json()
-        console.log(response.mongoResponse)
-        router.reload()
-      } else {
-        console.error('Error in updating unit:', res.statusText)
-      }
-    } catch (error) {
-      console.error('Error updating unit:', error)
-    }
-  }
+  // const updateConsumables = async () => {
+  //   console.log('this is getting sent to the backend:')
+  //   console.log(unitState)
+  //   console.log('this is the unit initial state:')
+  //   console.log(unit)
+  //   console.log('this is the side:')
+  //   console.log(unit.side)
+  //   try {
+  //     const res = await fetch('/api/updateUnit', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       },
+  //       body: JSON.stringify({
+  //         side: unit.side,
+  //         unitObject: unitState,
+  //         job: unit.jobData.jobNumber
+  //       })
+  //     })
+  //     if (res.ok) {
+  //       console.log('Unit Updated')
+  //       const response = await res.json()
+  //       console.log(response.mongoResponse)
+  //       router.reload()
+  //     } else {
+  //       console.error('Error in updating unit:', res.statusText)
+  //     }
+  //   } catch (error) {
+  //     console.error('Error updating unit:', error)
+  //   }
+  // }
   //this closes the popup and checks if any changes were made
   const handleClose = () => {
-    if (unitAndJob.unit === unitState) {
+    if (unit.unit === unitState) {
       console.log('no change')
       popUpToggle()
     } else {
