@@ -3,6 +3,7 @@ import Title from "../../components/title";
 import { useState } from "react";
 import Link from "next/link";
 import createEmptyUnit from "../../lib/createEmptyUnit";
+import { useRouter } from "next/router";
 
 const Container = styled.div`
   max-width: 100vw;
@@ -88,6 +89,7 @@ export default function CreateJob() {
   const [rightInputValues, setRightInputValues] = useState([''])
   const [isDataSubmitted, setIsDataSubmitted] = useState(false)
 
+  const router = useRouter()
   const handleJobNumberChange = (event) => {
     setJobNumber(event.target.value)
   }
@@ -173,6 +175,7 @@ export default function CreateJob() {
     })
     if (res.ok) {
       console.log('job created')
+      router.push(`/maintenance/`)
     } else {
       console.error('Error in creating job:', res.statusText)
     }
