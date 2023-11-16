@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const UnitContainer = styled.div`
-  width: 220px; /* Fixed width for the unit container */
+  width: 100%; /* Fixed width for the unit container */
   height: 120px; /* Fixed height for the unit container */
   display: flex;
   flex-direction: column;

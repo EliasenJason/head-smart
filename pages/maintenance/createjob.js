@@ -1,30 +1,86 @@
-import styled from "styled-components"
-import Title from "../../components/title"
-import { useState } from "react"
-import Link from "next/link"
+import styled from "styled-components";
+import Title from "../../components/title";
+import { useState } from "react";
+import Link from "next/link";
+import createEmptyUnit from "../../lib/createEmptyUnit";
+import { useRouter } from "next/router";
+
+const Container = styled.div`
+  max-width: 100vw;
+  margin: 0 auto;
+  padding: 20px;
+`;
+
+const Header = styled.h2`
+  width: 100%;
+  text-align: center;
+  margin-bottom: 20px;
+`;
 
 const PumpNumberInputContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
   justify-content: space-between;
-`
-const LeftInput = styled.div`
+  margin-bottom: 20px;
+`;
+
+const Input = styled.div`
   display: flex;
   margin: .5em;
-`
-const RightInput = styled.div`
-  display: flex;
-  margin: .5em;
-`
-const Header = styled.h2`
-  width: 100%;
-  text-align: center;
-`
+  flex: 1;
+  justify-content: center;
+  input {
+    border: solid black 1px;
+    margin-bottom: .5em;
+    height: 100%;
+    font-size: 1.2rem ;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  button {
+    background-color: #28a745;
+    color: #000;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 5px;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #1f8333;
+    }
+  }
+`;
+
 const CreateJobButton = styled.button`
+  background-color: #28a745;
+  color: #000;
   font-size: 2rem;
   font-weight: bold;
-`
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 20px;
+  &:hover {
+    background-color: #1f8333;
+  }
+`;
+
+const InputLabel = styled.label`
+  margin: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+`;
 
 
 export default function CreateJob() {
@@ -33,6 +89,7 @@ export default function CreateJob() {
   const [rightInputValues, setRightInputValues] = useState([''])
   const [isDataSubmitted, setIsDataSubmitted] = useState(false)
 
+  const router = useRouter()
   const handleJobNumberChange = (event) => {
     setJobNumber(event.target.value)
   }
@@ -74,59 +131,77 @@ export default function CreateJob() {
   }
 
   const createJob = async () => {
-    const unitsToFitSchema = (arrayOfUnitNumbers) => {
-      const units = arrayOfUnitNumbers.map(unit => {
-        return {
-          unitNumber: unit,
-          pack1: 'green',
-          pack2: 'green',
-          pack3: 'green',
-          pack4: 'green',
-          pack5: 'green'
-        }
+  //TODO setup checks to see if the same unit is used multiple times and display error
+
+  //add units that aren't already in the database, will fail if its a duplicate
+  let units = [...new Set([...leftInputValues,...rightInputValues])]
+  units.forEach((unitNumber, index) => units[index] = createEmptyUnit(unitNumber))
+  console.log('creating any new units')
+  try {
+    const res = await fetch('/api/maintenance/createUnits', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(units)
+    })
+    if (res.ok) {
+      console.log('units created')
+    } else {
+      console.error('Error in creating Units:', res.statusText)
+    }
+  } catch (error) {
+    console.error('Error creating units:', error)
+  }
+  //2. create the job with the references to the units
+  console.log('creating job')
+  let arrayOfLeftUnitObjects = leftInputValues.map((item) => {
+    return {unit: item}
+  })
+  let arrayOfRightUnitObjects = rightInputValues.map((item) => {
+    return {unit: item}
+  })
+  try {
+    const res = await fetch('/api/maintenance/createJob', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        jobNumber: jobNumber,
+        unitsOnLeft: arrayOfLeftUnitObjects,
+        unitsOnRight: arrayOfRightUnitObjects
       })
-      return units
+    })
+    if (res.ok) {
+      console.log('job created')
+      router.push(`/maintenance/`)
+    } else {
+      console.error('Error in creating job:', res.statusText)
     }
-    const createJobData = {
-      jobNumber: jobNumber,
-      unitsOnLeft: unitsToFitSchema(leftInputValues),
-      unitsOnRight: unitsToFitSchema(rightInputValues)
-    }
-    console.log(createJobData)
-    try {
-      const res = await fetch('/api/createJob', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(createJobData)
-      })
-      if (res.ok) {
-        setIsDataSubmitted(true)
-      } else {
-        console.error('Error submitting data:', res.statusText)
-      }
-    } catch (error) {
-      console.error('Error submitting data:', error)
-    }
+  } catch (error) {
+    console.error('Error creating job:', error)
+  }
   }
 
   return (
-    <>
-    <Title backButtonHref="/" Text="Create Job" />
-      
-        {isDataSubmitted ? (
-          <>
-            <p>Job has been created!</p>
-            <Link href="/maintenance"><button>Click here to return to the job lists</button></Link>
-          </>
-          
-        ) : (
-          <>
-            <label>Job Number</label><input type="text" onChange={handleJobNumberChange}/>
-            <Header>Blender</Header>
-            <PumpNumberInputContainer>
-              <LeftInput>
+    <Container>
+      <Title backButtonHref="/maintenance" Text="Create Job" />
+
+      {isDataSubmitted ? (
+        <>
+          <p>Job has been created!</p>
+          <Link href="/maintenance">
+            <CreateJobButton>Click here to return to the job lists</CreateJobButton>
+          </Link>
+        </>
+      ) : (
+        <>
+          <InputLabel>Job Number</InputLabel>
+          <input type="text" onChange={handleJobNumberChange} />
+          <Header>Blender</Header>
+          <PumpNumberInputContainer>
+            <Input>
                 <form>
                   {leftInputValues.map((value, index) => (
                     <div key={index}>
@@ -145,8 +220,8 @@ export default function CreateJob() {
                 </button>
               </form>
                 
-              </LeftInput>
-              <RightInput>
+              </Input>
+              <Input>
               <form>
                   {rightInputValues.map((value, index) => (
                     <div key={index}>
@@ -164,18 +239,15 @@ export default function CreateJob() {
                   Remove Input
                 </button>
               </form>
-              </RightInput>
-              
-            </PumpNumberInputContainer>
-            <Header>Wellhead</Header>
+              </Input>
+          </PumpNumberInputContainer>
+          <Header>Wellhead</Header>
 
-            <Header>
-              <CreateJobButton onClick={createJob}>Create Job</CreateJobButton>
-            </Header>
-          </>
-        )}
-        
-      
-    </>
-  )
+          <Header>
+            <CreateJobButton onClick={createJob}>Create Job</CreateJobButton>
+          </Header>
+        </>
+      )}
+    </Container>
+  );
 }

@@ -1,7 +1,8 @@
 import styled from "styled-components"
 import Title from "../components/title"
 import Link from "next/link"
-import { useState, useEffect } from "react";
+import jobModel from "../lib/schemas/maintenance/jobSchema";
+import connectMongo from "../lib/mongodb";
 import { useRouter } from "next/router";
 
 const Container = styled.div`
@@ -14,6 +15,9 @@ const JobList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin: 0 auto;
+  justify-content: right;
+  width: 100%;
 `;
 
 const JobButton = styled.button`
@@ -30,56 +34,29 @@ const JobButton = styled.button`
   }
 `;
 
-const CreateJobButton = styled.button`
+const ActionButton = styled.button`
   background-color: #28a745;
-  color: #fff;
+  color: #000;
   padding: 10px 15px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
-
+  margin-top: 10px;
   &:hover {
     background-color: #1f8333;
   }
 `;
 
-export default function Maintenance() {
-  const [data, setData] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch('/api/getJobs')
-        if (response.ok) {
-          const data = await response.json();
-          console.log(data)
-          setData(data);
-          setLoading(false);
-        } else {
-          console.error('Error fetching data:', response.statusText)
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error)
-      }
-    }
-
-    fetchData();
-  }, []);
-
+export default function Maintenance({data}) {
   const router = useRouter()
 
   const navigateToJob = (jobNumber) => {
     router.push(`/maintenance/${jobNumber}`)
   }
-
   return (
     <Container>
-      <Title backButtonHref={"/"} Text={'Maintenance'}/>
-      {loading ? (
-        <p>Loading Jobs...</p>
-      ): (
+      <Title backButtonHref={"/maintenance"} Text={'Maintenance'}/>
         <JobList>
             {data.map((item, index) => {
               return (
@@ -87,8 +64,31 @@ export default function Maintenance() {
               )
             })}
         </JobList>
-      )}
-      <Link href="/maintenance/createjob"><CreateJobButton>Create New Job</CreateJobButton></Link>
+      <Link href="/maintenance/createjob"><ActionButton>Create New Job</ActionButton></Link>
     </Container>
   )
+}
+
+export async function getServerSideProps() {
+  let data
+  // Make an API request to fetch job data based on the job number
+  try {
+    console.log('getJob route triggered')
+    console.log('connecting to mongo')
+    await connectMongo()
+    console.log('connected to mongo')
+
+    console.log('requesting data')
+    const response = await jobModel.find()
+    data = JSON.parse(JSON.stringify(response))
+    console.log('data received')
+  } catch(error) {
+    console.log('there has been an error!')
+    data = 'ERROR'
+  }
+  return {
+    props: {
+      data,
+    },
+  };
 }
