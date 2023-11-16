@@ -1,13 +1,215 @@
 import unitModel from "../../../lib/schemas/maintenance/unitSchema";
 import connectMongo from "../../../lib/mongodb";
+import styled from 'styled-components';
+import { useEffect, useState } from "react";
+
+const PopUp = styled.div`
+background: rgba(0, 0, 0, 0.8);
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+display: flex;
+justify-content: center;
+align-items: center;
+`
+const PopUpContent = styled.div`
+background: #fff;
+padding: 20px;
+border-radius: 4px;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+text-align: center;
+`
+const ExitButton = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 10px;
+  background-color: #ff0000;
+  color: #fff;
+`
+const GridContainer = styled.div`
+    display: grid;
+    width: 100%;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 5px; 
+    grid-template-areas: 
+      "unitNumber unitNumber unitNumber unitNumber unitNumber unitNumber"
+      ". hole-1 hole-2 hole-3 hole-4 hole-5"
+      "dischargeValve dischargeValve1 dischargeValve2 dischargeValve3 dischargeValve4 dischargeValve5"
+      "suctionValve suctionValve1 suctionValve2 suctionValve3 suctionValve4 suctionValve5"
+      "dischargeSeat dischargeSeat1 dischargeSeat2 dischargeSeat3 dischargeSeat4 dischargeSeat5"
+      "suctionSeat suctionSeat1 suctionSeat2 suctionSeat3 suctionSeat4 suctionSeat5"
+      "packing pack1 pack2 pack3 pack4 pack5"
+      "plunger plunger1 plunger2 plunger3 plunger4 plunger5"
+      "stuffingBox stuffingBox1 stuffingBox2 stuffingBox3 stuffingBox4 stuffingBox5"
+      "suctionSeal suctionSeal1 suctionSeal2 suctionSeal3 suctionSeal4 suctionSeal5"
+      "dischargeSeal dischargeSeal1 dischargeSeal2 dischargeSeal3 dischargeSeal4 dischargeSeal5"
+    ;
+`
+const UnitNutNumber = styled.div`
+grid-area: unitNumber;
+font-size: 2rem;
+box-sizing: border-box;
+width: 90vw;
+`
+const Hole1 = styled.div`
+grid-area: hole-1;;
+`
+const Hole2 = styled.div`
+grid-area: hole-2;
+`
+const Hole3 = styled.div`
+grid-area: hole-3;
+`
+const Hole4 = styled.div`
+grid-area: hole-4;
+`
+const Hole5 = styled.div`
+grid-area: hole-5;
+`
+const ComponentType = styled.div`
+grid-area: ${props => props.gridArea};
+display:flex;
+justify-content: center;
+align-items: center;
+`
+const Component = styled.button`
+grid-area: ${props => props.gridArea};
+background-color: ${props => props.color};
+height: 90px;
+`
 
 export default function Unit({unit}) {
-  console.log(unit)
+  const [unitState, setUnitState] = useState(unit)
+  
+  
+
+  useEffect(() => {
+    console.log(unitState)
+  },[unitState])
+
+  const handleStatusChange = (component, holeNumber) => {
+    if (unitState[component][holeNumber].status === "green") {
+      setUnitState({
+        ...unitState,
+        [component]: {
+          ...unitState[component],
+          [holeNumber]: {
+            ...unitState[component][holeNumber],
+            status: 'yellow'
+          }
+        }
+      });
+    } else if (unitState[component][holeNumber].status === "yellow") {
+      setUnitState({
+        ...unitState,
+        [component]: {
+          ...unitState[component],
+          [holeNumber]: {
+            ...unitState[component][holeNumber],
+            status: 'red'
+          }
+        }
+      });
+    } else if (unitState[component][holeNumber].status === "red") {
+      setUnitState({
+        ...unitState,
+        [component]: {
+          ...unitState[component],
+          [holeNumber]: {
+            ...unitState[component][holeNumber],
+            status: 'green'
+          }
+        }
+      });
+    }
+  }
+
+  
+
   return (
-    <>
-    <h1>data for {unit.number}</h1>
-    <p>{JSON.stringify(unit)}</p>
-    </>
+    <PopUp>
+      <PopUpContent>
+      <ExitButton onClick={() => handleClose()}>x</ExitButton>
+      <GridContainer>
+        <UnitNutNumber>{unit.number}</UnitNutNumber>
+        <Hole1>1</Hole1>
+        <Hole2>2</Hole2>
+        <Hole3>3</Hole3>
+        <Hole4>4</Hole4>
+        <Hole5>5</Hole5>
+
+        <ComponentType gridArea="dischargeValve">Discharge Valve</ComponentType>
+        <Component gridArea="dischargeValve1" color={unitState.dischargeValve[1].status} onClick={() => handleStatusChange("dischargeValve", 1)}></Component>
+        <Component gridArea="dischargeValve2" color={unitState.dischargeValve[2].status} onClick={() => handleStatusChange("dischargeValve", 2)}></Component>
+        <Component gridArea="dischargeValve3" color={unitState.dischargeValve[3].status} onClick={() => handleStatusChange("dischargeValve", 3)}></Component>
+        <Component gridArea="dischargeValve4" color={unitState.dischargeValve[4].status} onClick={() => handleStatusChange("dischargeValve", 4)}></Component>
+        <Component gridArea="dischargeValve5" color={unitState.dischargeValve[5].status} onClick={() => handleStatusChange("dischargeValve", 5)}></Component>
+
+        <ComponentType gridArea="suctionValve">Suction Valve</ComponentType>
+        <Component gridArea="suctionValve1" color={unitState.suctionValve[1].status} onClick={() => handleStatusChange("suctionValve", 1)}></Component>
+        <Component gridArea="suctionValve2" color={unitState.suctionValve[2].status} onClick={() => handleStatusChange("suctionValve", 2)}></Component>
+        <Component gridArea="suctionValve3" color={unitState.suctionValve[3].status} onClick={() => handleStatusChange("suctionValve", 3)}></Component>
+        <Component gridArea="suctionValve4" color={unitState.suctionValve[4].status} onClick={() => handleStatusChange("suctionValve", 4)}></Component>
+        <Component gridArea="suctionValve5" color={unitState.suctionValve[5].status} onClick={() => handleStatusChange("suctionValve", 5)}></Component>
+
+        <ComponentType gridArea="dischargeSeat">Discharge Seat</ComponentType>
+        <Component gridArea="dischargeSeat1" color={unitState.dischargeSeat[1].status} onClick={() => handleStatusChange("dischargeSeat", 1)}></Component>
+        <Component gridArea="dischargeSeat2" color={unitState.dischargeSeat[2].status} onClick={() => handleStatusChange("dischargeSeat", 2)}></Component>
+        <Component gridArea="dischargeSeat3" color={unitState.dischargeSeat[3].status} onClick={() => handleStatusChange("dischargeSeat", 3)}></Component>
+        <Component gridArea="dischargeSeat4" color={unitState.dischargeSeat[4].status} onClick={() => handleStatusChange("dischargeSeat", 4)}></Component>
+        <Component gridArea="dischargeSeat5" color={unitState.dischargeSeat[5].status} onClick={() => handleStatusChange("dischargeSeat", 5)}></Component>
+
+
+        <ComponentType gridArea="suctionSeat">Suction Seat</ComponentType>
+        <Component gridArea="suctionSeat1" color={unitState.suctionSeat[1].status} onClick={() => handleStatusChange("suctionSeat", 1)}></Component>
+        <Component gridArea="suctionSeat2" color={unitState.suctionSeat[2].status} onClick={() => handleStatusChange("suctionSeat", 2)}></Component>
+        <Component gridArea="suctionSeat3" color={unitState.suctionSeat[3].status} onClick={() => handleStatusChange("suctionSeat", 3)}></Component>
+        <Component gridArea="suctionSeat4" color={unitState.suctionSeat[4].status} onClick={() => handleStatusChange("suctionSeat", 4)}></Component>
+        <Component gridArea="suctionSeat5" color={unitState.suctionSeat[5].status} onClick={() => handleStatusChange("suctionSeat", 5)}></Component>
+
+        <ComponentType gridArea="packing">Packing</ComponentType>
+        <Component gridArea="pack1" color={unitState.packing[1].status} onClick={() => handleStatusChange("packing", 1)}></Component>
+        <Component gridArea="pack2" color={unitState.packing[2].status} onClick={() => handleStatusChange("packing", 2)}></Component>
+        <Component gridArea="pack3" color={unitState.packing[3].status} onClick={() => handleStatusChange("packing", 3)}></Component>
+        <Component gridArea="pack4" color={unitState.packing[4].status} onClick={() => handleStatusChange("packing", 4)}></Component>
+        <Component gridArea="pack5" color={unitState.packing[5].status} onClick={() => handleStatusChange("packing", 5)}></Component>
+        
+        <ComponentType gridArea="plunger">Plunger</ComponentType>
+        <Component gridArea="plunger1" color={unitState.plunger[1].status} onClick={() => handleStatusChange("plunger", 1)}></Component>
+        <Component gridArea="plunger2" color={unitState.plunger[2].status} onClick={() => handleStatusChange("plunger", 2)}></Component>
+        <Component gridArea="plunger3" color={unitState.plunger[3].status} onClick={() => handleStatusChange("plunger", 3)}></Component>
+        <Component gridArea="plunger4" color={unitState.plunger[4].status} onClick={() => handleStatusChange("plunger", 4)}></Component>
+        <Component gridArea="plunger5" color={unitState.plunger[5].status} onClick={() => handleStatusChange("plunger", 5)}></Component>
+
+        <ComponentType gridArea="stuffingBox">Stuffing Box</ComponentType>
+        <Component gridArea="stuffingBox1" color={unitState.stuffingBox[1].status} onClick={() => handleStatusChange("stuffingBox", 1)}></Component>
+        <Component gridArea="stuffingBox2" color={unitState.stuffingBox[2].status} onClick={() => handleStatusChange("stuffingBox", 2)}></Component>
+        <Component gridArea="stuffingBox3" color={unitState.stuffingBox[3].status} onClick={() => handleStatusChange("stuffingBox", 3)}></Component>
+        <Component gridArea="stuffingBox4" color={unitState.stuffingBox[4].status} onClick={() => handleStatusChange("stuffingBox", 4)}></Component>
+        <Component gridArea="stuffingBox5" color={unitState.stuffingBox[5].status} onClick={() => handleStatusChange("stuffingBox", 5)}></Component>
+
+        <ComponentType gridArea="suctionSeal">Suction Seal</ComponentType>
+        <Component gridArea="suctionSeal1" color={unitState.suctionSeal[1].status} onClick={() => handleStatusChange("suctionSeal", 1)}></Component>
+        <Component gridArea="suctionSeal2" color={unitState.suctionSeal[2].status} onClick={() => handleStatusChange("suctionSeal", 2)}></Component>
+        <Component gridArea="suctionSeal3" color={unitState.suctionSeal[3].status} onClick={() => handleStatusChange("suctionSeal", 3)}></Component>
+        <Component gridArea="suctionSeal4" color={unitState.suctionSeal[4].status} onClick={() => handleStatusChange("suctionSeal", 4)}></Component>
+        <Component gridArea="suctionSeal5" color={unitState.suctionSeal[5].status} onClick={() => handleStatusChange("suctionSeal", 5)}></Component>
+
+        <ComponentType gridArea="dischargeSeal">Discharge Seal</ComponentType>
+        <Component gridArea="dischargeSeal1" color={unitState.dischargeSeal[1].status} onClick={() => handleStatusChange("dischargeSeal", 1)}></Component>
+        <Component gridArea="dischargeSeal2" color={unitState.dischargeSeal[2].status} onClick={() => handleStatusChange("dischargeSeal", 2)}></Component>
+        <Component gridArea="dischargeSeal3" color={unitState.dischargeSeal[3].status} onClick={() => handleStatusChange("dischargeSeal", 3)}></Component>
+        <Component gridArea="dischargeSeal4" color={unitState.dischargeSeal[4].status} onClick={() => handleStatusChange("dischargeSeal", 4)}></Component>
+        <Component gridArea="dischargeSeal5" color={unitState.dischargeSeal[5].status} onClick={() => handleStatusChange("dischargeSeal", 5)}></Component>
+
+
+      </GridContainer>
+      
+      </PopUpContent>
+    </PopUp>
   )
 }
 
