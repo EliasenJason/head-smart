@@ -5,7 +5,7 @@ import Link from "next/link";
 import createEmptyUnit from "../../lib/createEmptyUnit";
 
 const Container = styled.div`
-  max-width: 800px;
+  max-width: 100vw;
   margin: 0 auto;
   padding: 20px;
 `;
@@ -13,6 +13,7 @@ const Container = styled.div`
 const Header = styled.h2`
   width: 100%;
   text-align: center;
+  margin-bottom: 20px;
 `;
 
 const PumpNumberInputContainer = styled.div`
@@ -28,10 +29,31 @@ const Input = styled.div`
   margin: .5em;
   flex: 1;
   justify-content: center;
-  
   input {
     border: solid black 1px;
     margin-bottom: .5em;
+    height: 100%;
+    font-size: 1.2rem ;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  button {
+    background-color: #28a745;
+    color: #000;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 5px;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #1f8333;
+    }
   }
 `;
 
@@ -45,10 +67,18 @@ const CreateJobButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
-
+  margin-top: 20px;
   &:hover {
     background-color: #1f8333;
   }
+`;
+
+const InputLabel = styled.label`
+  margin: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
 `;
 
 
@@ -101,7 +131,7 @@ export default function CreateJob() {
   const createJob = async () => {
   //TODO setup checks to see if the same unit is used multiple times and display error
 
-  //1. need to add units that aren't already in the database
+  //add units that aren't already in the database, will fail if its a duplicate
   let units = [...new Set([...leftInputValues,...rightInputValues])]
   units.forEach((unitNumber, index) => units[index] = createEmptyUnit(unitNumber))
   console.log('creating any new units')
@@ -164,7 +194,7 @@ export default function CreateJob() {
         </>
       ) : (
         <>
-          <label>Job Number</label>
+          <InputLabel>Job Number</InputLabel>
           <input type="text" onChange={handleJobNumberChange} />
           <Header>Blender</Header>
           <PumpNumberInputContainer>

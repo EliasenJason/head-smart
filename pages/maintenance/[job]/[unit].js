@@ -2,25 +2,8 @@ import unitModel from "../../../lib/schemas/maintenance/unitSchema";
 import connectMongo from "../../../lib/mongodb";
 import styled from 'styled-components';
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
-const PopUp = styled.div`
-background: rgba(0, 0, 0, 0.8);
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-display: flex;
-justify-content: center;
-align-items: center;
-`
-const PopUpContent = styled.div`
-background: #fff;
-padding: 20px;
-border-radius: 4px;
-box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-text-align: center;
-`
 const ExitButton = styled.div`
   position: absolute;
   top: 10px;
@@ -28,12 +11,16 @@ const ExitButton = styled.div`
   padding: 5px 10px;
   background-color: #ff0000;
   color: #fff;
+  z-index: 2;
 `
 const GridContainer = styled.div`
     display: grid;
     width: 100%;
+    height: 100vh;
+    padding-right: 1em;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-    gap: 5px; 
+    gap: 5px;
+    overflow: auto;
     grid-template-areas: 
       "unitNumber unitNumber unitNumber unitNumber unitNumber unitNumber"
       ". hole-1 hole-2 hole-3 hole-4 hole-5"
@@ -47,48 +34,53 @@ const GridContainer = styled.div`
       "suctionSeal suctionSeal1 suctionSeal2 suctionSeal3 suctionSeal4 suctionSeal5"
       "dischargeSeal dischargeSeal1 dischargeSeal2 dischargeSeal3 dischargeSeal4 dischargeSeal5"
     ;
+    
 `
-const UnitNutNumber = styled.div`
+const UnitNumber = styled.div`
 grid-area: unitNumber;
 font-size: 2rem;
-box-sizing: border-box;
-width: 90vw;
+position: sticky;
+top: 0;
+background-color: white;
+z-index: 1;
+border-bottom: solid 2px black;
 `
 const Hole1 = styled.div`
-grid-area: hole-1;;
+grid-area: hole-1;
+text-align: center;
 `
 const Hole2 = styled.div`
 grid-area: hole-2;
+text-align: center;
 `
 const Hole3 = styled.div`
 grid-area: hole-3;
+text-align: center;
 `
 const Hole4 = styled.div`
 grid-area: hole-4;
+text-align: center;
 `
 const Hole5 = styled.div`
 grid-area: hole-5;
+text-align: center;
 `
 const ComponentType = styled.div`
 grid-area: ${props => props.gridArea};
 display:flex;
-justify-content: center;
+justify-content: left;
 align-items: center;
 `
 const Component = styled.button`
 grid-area: ${props => props.gridArea};
 background-color: ${props => props.color};
-height: 90px;
+height: 70px;
 `
 
-export default function Unit({unit}) {
+export default function Unit({unit, job}) {
   const [unitState, setUnitState] = useState(unit)
   
-  
-
-  useEffect(() => {
-    console.log(unitState)
-  },[unitState])
+  const router = useRouter()
 
   const handleStatusChange = (component, holeNumber) => {
     if (unitState[component][holeNumber].status === "green") {
@@ -127,14 +119,37 @@ export default function Unit({unit}) {
     }
   }
 
+  const handleClose = async () => {
+    if (unit === unitState) {
+      router.push(`/maintenance/${job}`)
+    } else {
+      try {
+        const res = await fetch('/api/maintenance/updateUnit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(unitState)
+        })
+        if (res.ok) {
+          console.log('job updated')
+          router.push(`/maintenance/${job}`)
+        } else {
+          console.error('Error in updating job:', res.statusText)
+        }
+      } catch (error) {
+        console.error('Error updating job:', error)
+      }
+    }
+    
+  }
   
 
   return (
-    <PopUp>
-      <PopUpContent>
+    <>
       <ExitButton onClick={() => handleClose()}>x</ExitButton>
       <GridContainer>
-        <UnitNutNumber>{unit.number}</UnitNutNumber>
+        <UnitNumber>{unit.number}</UnitNumber>
         <Hole1>1</Hole1>
         <Hole2>2</Hole2>
         <Hole3>3</Hole3>
@@ -204,17 +219,14 @@ export default function Unit({unit}) {
         <Component gridArea="dischargeSeal3" color={unitState.dischargeSeal[3].status} onClick={() => handleStatusChange("dischargeSeal", 3)}></Component>
         <Component gridArea="dischargeSeal4" color={unitState.dischargeSeal[4].status} onClick={() => handleStatusChange("dischargeSeal", 4)}></Component>
         <Component gridArea="dischargeSeal5" color={unitState.dischargeSeal[5].status} onClick={() => handleStatusChange("dischargeSeal", 5)}></Component>
-
-
       </GridContainer>
-      
-      </PopUpContent>
-    </PopUp>
+    </>
   )
 }
 
 export async function getServerSideProps(context) {
   const unitNumber = context.params.unit;
+  const jobNumber = context.params.job
   const query = {number: unitNumber}
   console.log(query)
   let unit
@@ -237,7 +249,8 @@ export async function getServerSideProps(context) {
   }
   return {
     props: {
-      unit: JSON.parse(JSON.stringify(unit))
+      unit: JSON.parse(JSON.stringify(unit)),
+      job: jobNumber
     },
   };
 }

@@ -15,6 +15,9 @@ const JobList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin: 0 auto;
+  justify-content: right;
+  width: 100%;
 `;
 
 const JobButton = styled.button`
@@ -39,7 +42,7 @@ const ActionButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
-
+  margin-top: 10px;
   &:hover {
     background-color: #1f8333;
   }

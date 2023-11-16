@@ -20,25 +20,24 @@ const JobNumberContainer = styled.div`
 `
 const UnitsContainer = styled.div`
   width: 100%;
-  display:flex;
-  flex-direction: row ;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 `
 
 const LeftUnits = styled.div`
-  width: 50%;
-  display:flex;
+  width: 45%;
+  display: flex;
   flex-direction: column;
-  justify-content: Start;
   align-items: center;
   gap: 1em;
   margin: 1em;
 `
 
 const RightUnits = styled.div`
-  width: 50%;
-  display:flex;
+  width: 45%;
+  display: flex;
   flex-direction: column;
-  justify-content: start;
   align-items: center;
   gap: 1em;
   margin: 1em;
@@ -61,18 +60,35 @@ const ActionButton = styled.button`
 
 export default function JobDetail({ job }) {
   const [showDeletePopUp, setShowDeletePopUp] = useState(false)
-  
+  console.log(job)
   const router = useRouter()
 
   const toggleDeletePopUp = () => {
     showDeletePopUp ? setShowDeletePopUp(false) : setShowDeletePopUp(true)
   }
-  const toggleUnitPopUp = () => {
-    showUnitPopUp && setShowUnitPopUp('')
-  }
 
   const back = () => {
     router.push('/maintenance')
+  }
+
+  const deleteJob = async() => {
+    try {
+      const res = await fetch('/api/maintenance/deleteJob', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(job.jobNumber)
+      })
+      if (res.ok) {
+        console.log('job deleted')
+        router.push("/maintenance/")
+      } else {
+        console.error('Error in deleting job:', res.statusText)
+      }
+    } catch (error) {
+      console.error('Error deleting job:', error)
+    }
   }
     return (
       <>
@@ -112,7 +128,7 @@ export default function JobDetail({ job }) {
       </UnitsContainer>
       <ActionButton onClick={() => toggleDeletePopUp()}>Delete job</ActionButton>
       {showDeletePopUp && <Confirm action={deleteJob} popUpToggle={toggleDeletePopUp}/>}
-    </>
+      </>
     );
   }
 
