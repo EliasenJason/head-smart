@@ -98,6 +98,9 @@ export default function JobDetail({ job }) {
         <LeftUnits>
         <h3>Left</h3>
           {job.unitsOnLeft.map((unit, index) => {
+            if (unit === null) {
+              return <p key={index}>{`missing unit at index: ${index}`}</p>
+            } else {
             return (
               <UnitDisplay 
                   key={index}
@@ -107,23 +110,26 @@ export default function JobDetail({ job }) {
                   elements={checkForIssues(unit)} 
                   unitNumber={unit.number}  
                 />
-            )
+            )}
           })}
         </LeftUnits>
         <RightUnits>
           <h3>Right</h3>
         {job.unitsOnRight.map((unit, index) => {
-            return (
+              if (unit === null) {
+                return <p key={index}>{`missing unit at index: ${index}`}</p>
+              } else {
+              return (
                 <UnitDisplay 
-                  key={index}
-                  elements={checkForIssues(unit)} 
-                  onClick={() => {
-                    router.push(`/maintenance/${job.jobNumber}/${unit.number}`)
-                  }}
-                  unitNumber={unit.number} 
-                />
-            )
-          })}
+                    key={index}
+                    onClick={() => {
+                      router.push(`/maintenance/${job.jobNumber}/${unit.number}`)
+                    }}
+                    elements={checkForIssues(unit)} 
+                    unitNumber={unit.number}  
+                  />
+              )}
+            })}
         </RightUnits>
       </UnitsContainer>
       <ActionButton onClick={() => toggleDeletePopUp()}>Delete job</ActionButton>
