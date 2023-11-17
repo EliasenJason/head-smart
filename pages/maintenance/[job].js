@@ -98,9 +98,7 @@ export default function JobDetail({ job }) {
         <LeftUnits>
         <h3>Left</h3>
           {job.unitsOnLeft.map((unit, index) => {
-            if (unit === null) {
-              return <p key={index}>{`missing unit at index: ${index}`}</p>
-            } else {
+            if (unit !== null) {
             return (
               <UnitDisplay 
                   key={index}
@@ -116,9 +114,7 @@ export default function JobDetail({ job }) {
         <RightUnits>
           <h3>Right</h3>
         {job.unitsOnRight.map((unit, index) => {
-              if (unit === null) {
-                return <p key={index}>{`missing unit at index: ${index}`}</p>
-              } else {
+              if (unit !== null) {
               return (
                 <UnitDisplay 
                     key={index}
