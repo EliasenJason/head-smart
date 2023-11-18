@@ -4,9 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import createEmptyUnit from "../../lib/createEmptyUnit";
 import { useRouter } from "next/router";
+import LoadingSpinner from "../../components/maintenance/loadingSpinner";
 
 const Container = styled.div`
-  max-width: 100vw;
+  max-width: 800px;
   margin: 0 auto;
   padding: 20px;
 `;
@@ -20,7 +21,6 @@ const Header = styled.h2`
 const PumpNumberInputContainer = styled.div`
   display: flex;
   flex-direction: row;
-  width: 100%;
   justify-content: space-between;
   margin-bottom: 20px;
 `;
@@ -28,13 +28,14 @@ const PumpNumberInputContainer = styled.div`
 const Input = styled.div`
   display: flex;
   margin: .5em;
-  flex: 1;
   justify-content: center;
+
   input {
     border: solid black 1px;
     margin-bottom: .5em;
     height: 100%;
     font-size: 1.2rem ;
+    width: 100%;
   }
   form {
     display: flex;
@@ -45,7 +46,7 @@ const Input = styled.div`
     color: #000;
     font-size: 1rem;
     font-weight: bold;
-    padding: 5px 10px;
+    padding: .5em 1em;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -55,6 +56,9 @@ const Input = styled.div`
     &:hover {
       background-color: #1f8333;
     }
+  }
+  div{
+    margin-bottom: .5em;
   }
 `;
 
@@ -88,6 +92,7 @@ export default function CreateJob() {
   const [leftInputValues, setLeftInputValues] = useState([''])
   const [rightInputValues, setRightInputValues] = useState([''])
   const [isDataSubmitted, setIsDataSubmitted] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const router = useRouter()
   const handleJobNumberChange = (event) => {
@@ -132,7 +137,7 @@ export default function CreateJob() {
 
   const createJob = async () => {
   //TODO setup checks to see if the same unit is used multiple times and display error
-
+  setIsLoading(true)
   //add units that aren't already in the database, will fail if its a duplicate
   let units = [...new Set([...leftInputValues,...rightInputValues])]
   units.forEach((unitNumber, index) => units[index] = createEmptyUnit(unitNumber))
@@ -179,20 +184,20 @@ export default function CreateJob() {
     } else {
       console.error('Error in creating job:', res.statusText)
     }
-  } catch (error) {
-    console.error('Error creating job:', error)
+    } catch (error) {
+      console.error('Error creating job:', error)
   }
+  setIsLoading(false)
   }
 
   return (
     <Container>
-      <Title backButtonHref="/maintenance" Text="Create Job" />
-
+      <Title backButtonHref="/maintenance" Text="Create a Job" />
       {isDataSubmitted ? (
         <>
           <p>Job has been created!</p>
           <Link href="/maintenance">
-            <CreateJobButton>Click here to return to the job lists</CreateJobButton>
+            <CreateJobButton>Click here to return to the job list</CreateJobButton>
           </Link>
         </>
       ) : (
@@ -202,16 +207,16 @@ export default function CreateJob() {
           <Header>Blender</Header>
           <PumpNumberInputContainer>
             <Input>
-                <form>
-                  {leftInputValues.map((value, index) => (
-                    <div key={index}>
-                      <input
-                        type="text"
-                        value={value}
-                        onChange={(e) => handleLeftInputChange(index, e.target.value)}
-                      />
-                    </div>
-                  ))}
+              <form>
+                {leftInputValues.map((value, index) => (
+                  <div key={index}>
+                    <input
+                      type="text"
+                      value={value}
+                      onChange={(e) => handleLeftInputChange(index, e.target.value)}
+                    />
+                  </div>
+                ))}
                 <button type="button" onClick={addLeftInput}>
                   Add Input
                 </button>
@@ -219,8 +224,7 @@ export default function CreateJob() {
                   Remove Input
                 </button>
               </form>
-                
-              </Input>
+            </Input>
               <Input>
               <form>
                   {rightInputValues.map((value, index) => (
@@ -242,10 +246,11 @@ export default function CreateJob() {
               </Input>
           </PumpNumberInputContainer>
           <Header>Wellhead</Header>
-
+                  
           <Header>
             <CreateJobButton onClick={createJob}>Create Job</CreateJobButton>
           </Header>
+          <LoadingSpinner isLoading={isLoading}/>
         </>
       )}
     </Container>

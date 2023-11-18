@@ -7,17 +7,15 @@ import UnitDisplay from '../../components/maintenance/unitDisplay';
 import jobModel from '../../lib/schemas/maintenance/jobSchema';
 import unitModel from '../../lib/schemas/maintenance/unitSchema';
 import checkForIssues from '../../lib/checks/checkForIssues';
+import Title from '../../components/title';
+import LoadingSpinner from '../../components/maintenance/loadingSpinner';
 
-const JobNumberContainer = styled.div`
-  width: 100%;
-  text-align: center;
-  background-color: #343a40;
-  color: #fff;
-  padding: 10px 0;
-  font-size: 24px;
-  border-radius: 5px;
-  margin: 20px 0;
-`
+const Container = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+`;
+
 const UnitsContainer = styled.div`
   width: 100%;
   display: flex;
@@ -60,18 +58,16 @@ const ActionButton = styled.button`
 
 export default function JobDetail({ job }) {
   const [showDeletePopUp, setShowDeletePopUp] = useState(false)
-  console.log(job)
+  const [isLoading, setIsLoading] = useState(false)
+  
   const router = useRouter()
 
   const toggleDeletePopUp = () => {
     showDeletePopUp ? setShowDeletePopUp(false) : setShowDeletePopUp(true)
   }
 
-  const back = () => {
-    router.push('/maintenance')
-  }
-
   const deleteJob = async() => {
+    setIsLoading(true)
     try {
       const res = await fetch('/api/maintenance/deleteJob', {
         method: 'POST',
@@ -89,31 +85,15 @@ export default function JobDetail({ job }) {
     } catch (error) {
       console.error('Error deleting job:', error)
     }
+    setIsLoading(false)
   }
     return (
-      <>
-      <ActionButton onClick={() => back()}>go back</ActionButton>
-      <JobNumberContainer>{job.jobNumber}</JobNumberContainer>
-      <UnitsContainer>
-        <LeftUnits>
-        <h3>Left</h3>
-          {job.unitsOnLeft.map((unit, index) => {
-            if (unit !== null) {
-            return (
-              <UnitDisplay 
-                  key={index}
-                  onClick={() => {
-                    router.push(`/maintenance/${job.jobNumber}/${unit.number}`)
-                  }}
-                  elements={checkForIssues(unit)} 
-                  unitNumber={unit.number}  
-                />
-            )}
-          })}
-        </LeftUnits>
-        <RightUnits>
-          <h3>Right</h3>
-        {job.unitsOnRight.map((unit, index) => {
+      <Container>
+        <Title backButtonHref={"/maintenance"} Text={job.jobNumber}></Title>
+        <UnitsContainer>
+          <LeftUnits>
+          <h3>Left</h3>
+            {job.unitsOnLeft.map((unit, index) => {
               if (unit !== null) {
               return (
                 <UnitDisplay 
@@ -126,11 +106,28 @@ export default function JobDetail({ job }) {
                   />
               )}
             })}
-        </RightUnits>
-      </UnitsContainer>
-      <ActionButton onClick={() => toggleDeletePopUp()}>Delete job</ActionButton>
-      {showDeletePopUp && <Confirm action={deleteJob} popUpToggle={toggleDeletePopUp}/>}
-      </>
+          </LeftUnits>
+          <RightUnits>
+            <h3>Right</h3>
+          {job.unitsOnRight.map((unit, index) => {
+                if (unit !== null) {
+                return (
+                  <UnitDisplay 
+                      key={index}
+                      onClick={() => {
+                        router.push(`/maintenance/${job.jobNumber}/${unit.number}`)
+                      }}
+                      elements={checkForIssues(unit)} 
+                      unitNumber={unit.number}  
+                    />
+                )}
+              })}
+          </RightUnits>
+        </UnitsContainer>
+        <ActionButton onClick={() => toggleDeletePopUp()}>Delete job</ActionButton>
+        {showDeletePopUp && <Confirm action={deleteJob} popUpToggle={toggleDeletePopUp}/>}
+        <LoadingSpinner isLoading={isLoading}/>
+      </Container>
     );
   }
 
@@ -142,11 +139,7 @@ export async function getServerSideProps(context) {
   // Make an API request to fetch job data based on the job number
   try {
     console.log('getJob route triggered')
-    console.log('connecting to mongo')
     await connectMongo()
-    console.log('connected to mongo')
-
-    console.log('requesting data')
     job = await jobModel
       .findOne(query)
       .populate({
@@ -157,8 +150,6 @@ export async function getServerSideProps(context) {
       .exec()
     job.unitsOnLeft = job.unitsOnLeft.map(entry => entry.unit);
     job.unitsOnRight = job.unitsOnRight.map(entry => entry.unit);
-      console.log('*')
-      console.log(job)
     console.log('data received')
   } catch(error) {
     console.log('there has been an error!')
