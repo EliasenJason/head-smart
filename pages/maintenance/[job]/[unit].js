@@ -3,6 +3,13 @@ import connectMongo from "../../../lib/mongodb";
 import styled from 'styled-components';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import LoadingSpinner from "../../../components/maintenance/loadingSpinner";
+
+const Container = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+`;
 
 const ExitButton = styled.div`
   position: absolute;
@@ -79,6 +86,7 @@ height: 70px;
 
 export default function Unit({unit, job}) {
   const [unitState, setUnitState] = useState(unit)
+  const [isLoading, setIsLoading] = useState(false)
   
   const router = useRouter()
 
@@ -120,6 +128,7 @@ export default function Unit({unit, job}) {
   }
 
   const handleClose = async () => {
+    setIsLoading(true)
     if (unit === unitState) {
       router.push(`/maintenance/${job}`)
     } else {
@@ -141,12 +150,12 @@ export default function Unit({unit, job}) {
         console.error('Error updating job:', error)
       }
     }
-    
+    setIsLoading(false)
   }
   
 
   return (
-    <>
+    <Container>
       <ExitButton onClick={() => handleClose()}>x</ExitButton>
       <GridContainer>
         <UnitNumber>{unit.number}</UnitNumber>
@@ -220,7 +229,8 @@ export default function Unit({unit, job}) {
         <Component gridArea="dischargeSeal4" color={unitState.dischargeSeal[4].status} onClick={() => handleStatusChange("dischargeSeal", 4)}></Component>
         <Component gridArea="dischargeSeal5" color={unitState.dischargeSeal[5].status} onClick={() => handleStatusChange("dischargeSeal", 5)}></Component>
       </GridContainer>
-    </>
+      <LoadingSpinner isLoading={isLoading} />
+    </Container>
   )
 }
 
