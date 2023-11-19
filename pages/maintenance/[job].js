@@ -66,6 +66,10 @@ export default function JobDetail({ job }) {
     showDeletePopUp ? setShowDeletePopUp(false) : setShowDeletePopUp(true)
   }
 
+  const adjustJob = () => {
+    router.push(`/maintenance/[job]/adjust`, `/maintenance/${job.jobNumber}/adjust`)
+  }
+
   const deleteJob = async() => {
     setIsLoading(true)
     try {
@@ -125,6 +129,7 @@ export default function JobDetail({ job }) {
           </RightUnits>
         </UnitsContainer>
         <ActionButton onClick={() => toggleDeletePopUp()}>Delete job</ActionButton>
+        <ActionButton onClick={() => adjustJob()}>Adjust job</ActionButton>
         {showDeletePopUp && <Confirm action={deleteJob} popUpToggle={toggleDeletePopUp}/>}
         <LoadingSpinner isLoading={isLoading}/>
       </Container>
