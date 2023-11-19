@@ -78,28 +78,26 @@ export default function AdjustJob({job}) {
         <UnitsContainer>
           <LeftUnits>
           <h3>Left</h3>
-            {job.unitsOnLeft.map((unit, index) => {
-              if (unit !== null) {
+            {job.unitsOnLeft.map((item, index) => {
+              if (item !== null) {
               return (
                 <div 
-                    key={index}
-                    unitNumber={unit}  
+                    key={index} 
                   >
-                  {unit.unit}
+                  {item.unit}
                   </div>
               )}
             })}
           </LeftUnits>
           <RightUnits>
             <h3>Right</h3>
-          {job.unitsOnRight.map((unit, index) => {
-                if (unit !== null) {
+          {job.unitsOnRight.map((item, index) => {
+                if (item !== null) {
                 return (
                   <div 
                     key={index}
-                    unitNumber={unit}  
                   >
-                  {unit.unit}
+                  {item.unit}
                   </div>
                 )}
               })}
