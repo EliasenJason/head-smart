@@ -6,6 +6,7 @@ import Title from "../../../components/title"
 import styled from "styled-components"
 import LoadingSpinner from "../../../components/maintenance/loadingSpinner"
 import MoveableItem from "../../../components/maintenance/moveableItem"
+import createEmptyUnit from "../../../lib/createEmptyUnit"
 
 
 /*
@@ -65,6 +66,20 @@ const ActionButton = styled.button`
   }
 `;
 
+const AddItemButton = styled.button`
+  background-color: #28a745;
+  color: #fff;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-top: 10px;
+
+  &:hover {
+    background-color: #218838;
+  }
+`;
+
 export default function AdjustJob({job}) {
   const [jobUpdate, setJobUpdate] = useState(job)
   const [isLoading, setIsLoading] = useState(false)
@@ -117,14 +132,85 @@ export default function AdjustJob({job}) {
     }
   };
 
-  const addUnit = () => {
-    /*
-    TODO:
-    1. update the database with the new unit number if it doesn't already exist, using the 
-    createEmptyUnit lib function for the update and hitting the createUnit api route
-    2. if the unit is confirmed in the database update the jobUpdate state with the unit
-    */
+  const moveItemToOppositeSide = (side, index) => {
+    // Assuming you have unitsOnLeft and unitsOnRight arrays in your jobUpdate state
+    const updatedJob = { ...jobUpdate };
+    const { unitsOnLeft, unitsOnRight } = updatedJob;
+
+    const itemToMove = side === 'left' ? unitsOnLeft[index] : unitsOnRight[index];
+    console.log('removing')
+    console.log(itemToMove)
+    // Remove the item from the current side
+    if (side === 'left') {
+      updatedJob.unitsOnLeft.splice(index, 1);
+    } else {
+      updatedJob.unitsOnRight.splice(index, 1);
+    }
+
+    // Add the item to the opposite side
+    const oppositeSide = side === 'left' ? 'Right' : 'Left';
+    console.log(updatedJob)
+    console.log(updatedJob[`unitsOn${oppositeSide}`])
+    updatedJob[`unitsOn${oppositeSide}`].push(itemToMove);
+
+    // Update the state
+    setJobUpdate(updatedJob);
+  };
+
+  const handleAddItem = async (side) => {
+   
+    const newItemUnit = window.prompt('Enter Unit Number:', '');
+    const isDuplicate = jobUpdate.unitsOnLeft.some((item) => item.unit === newItemUnit) ||
+                        jobUpdate.unitsOnRight.some((item) => item.unit === newItemUnit)
+    if (newItemUnit !== null && newItemUnit !== '' && !isDuplicate) {
+      console.log('no issue found')
+      //TODO Add the new unit to the units database if it isn't already there
+      try {
+        const res = await fetch('/api/maintenance/createUnit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(createEmptyUnit(newItemUnit))
+        })
+        if (res.ok) {
+          console.log(res)
+          console.log('units created')
+        } else {
+          console.error('Error in creating Units:', res.statusText)
+        }
+      } catch (error) {
+        console.error('Error creating units:', error)
+      }
+      
+      //TODO confirm the new unit is in the database
+
+      //proceed once the unit exists in the database:
+      const updatedJob = { ...jobUpdate };
+      const newItem = { unit: newItemUnit };
+
+      if (side === 'left') {
+        console.log(updatedJob.UnitsOnLeft.length)
+        updatedJob.unitsOnLeft.push(newItem);
+      } else {
+        updatedJob.unitsOnRight.push(newItem);
+      }
+
+      setJobUpdate(updatedJob);
+    }
   }
+  const handleRemoveItem = (side, index) => {
+    const updatedJob = { ...jobUpdate };
+
+    // Remove the item from the specified side
+    if (side === 'left') {
+      updatedJob.unitsOnLeft.splice(index, 1);
+    } else {
+      updatedJob.unitsOnRight.splice(index, 1);
+    }
+
+    setJobUpdate(updatedJob);
+  };
 
   const updateDatabaseAndRouteBack = async () => {
     //TODO: route back to the job after update
@@ -155,38 +241,46 @@ export default function AdjustJob({job}) {
     }
     
   }
-
+  console.log('**')
+  console.log(jobUpdate.unitsOnLeft)
+  console.log(jobUpdate.unitsOnRight)
   return (
     <Container>
-        <Title backButtonHref={"/maintenance"} Text={"Adjust Units"}></Title>
+        <Title backButtonHref={`/maintenance/${job.jobNumber}`} Text={"Adjust Units"}></Title>
         <UnitsContainer>
           <LeftUnits>
           <h3>Left</h3>
             {jobUpdate.unitsOnLeft.map((item, index) => {
-              if (item !== null) {
+              if (item.unit !== null && item.unit !== '') {
               return (
                 <MoveableItem
                   key={`left-unit-${index}`}
                   item={item}
                   onMoveUp={() => moveUnitUp('left', index)}
                   onMoveDown={() => moveUnitDown('left', index)}
+                  onSwapToOppositeSide={() => moveItemToOppositeSide('left', index)}
+                  onRemove={() => handleRemoveItem('left', index)}
                 />
               )}
             })}
+            <AddItemButton onClick={() => handleAddItem('left')}>Add Item</AddItemButton>
           </LeftUnits>
           <RightUnits>
             <h3>Right</h3>
           {jobUpdate.unitsOnRight.map((item, index) => {
-                if (item !== null) {
+                if (item.unit !== null && item.unit !== '') {
                 return (
                   <MoveableItem
                   key={`right-unit-${index}`}
                   item={item}
                   onMoveUp={() => moveUnitUp('right', index)}
                   onMoveDown={() => moveUnitDown('right', index)}
+                  onSwapToOppositeSide={() => moveItemToOppositeSide('right', index)}
+                  onRemove={() => handleRemoveItem('right', index)}
                 />
                 )}
               })}
+              <AddItemButton onClick={() => handleAddItem('right')}>Add Item</AddItemButton>
           </RightUnits>
         </UnitsContainer>
         <LoadingSpinner isLoading={isLoading}/>

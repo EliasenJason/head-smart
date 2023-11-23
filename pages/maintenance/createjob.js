@@ -166,6 +166,12 @@ export default function CreateJob() {
   let arrayOfRightUnitObjects = rightInputValues.map((item) => {
     return {unit: item}
   })
+  if (arrayOfLeftUnitObjects.length === 1 && arrayOfLeftUnitObjects[0].unit === '') {
+    arrayOfLeftUnitObjects = []
+  }
+  if (arrayOfRightUnitObjects.length === 1 && arrayOfRightUnitObjects[0].unit === '') {
+    arrayOfRightUnitObjects = []
+  }
   try {
     const res = await fetch('/api/maintenance/createJob', {
       method: 'POST',
