@@ -105,7 +105,7 @@ export default function JobDetail({ job }) {
                     onClick={() => {
                       router.push(`/maintenance/${job.jobNumber}/${unit.number}`)
                     }}
-                    elements={checkForIssues(unit)} 
+                    unit={unit}
                     unitNumber={unit.number}  
                   />
               )}
@@ -121,7 +121,7 @@ export default function JobDetail({ job }) {
                       onClick={() => {
                         router.push(`/maintenance/${job.jobNumber}/${unit.number}`)
                       }}
-                      elements={checkForIssues(unit)} 
+                      unit={unit}
                       unitNumber={unit.number}  
                     />
                 )}

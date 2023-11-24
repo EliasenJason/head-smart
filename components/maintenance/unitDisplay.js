@@ -24,7 +24,6 @@ const UnitNumber = styled.div`
 
 const ElementsContainer = styled.div`
   display: flex;
-  justify-content: space-between;
   width: 100%;
 `;
 
@@ -34,26 +33,114 @@ const Circle = styled.div`
   border: 2px solid #0077B6;
   border-radius: 50%;
   display: flex;
+  visibility:  ${props => props.color ? "visible" : "hidden"}; ;
   align-items: center;
   justify-content: center;
   font-size: 24px;
   font-weight: bold;
-  color: #0077B6;
-  background-color: #E5E5E5;
-  transition: background-color 0.3s ease-in-out;
+  color: #000;
+  background-color: ${props => props.color};
 `;
 
-const UnitDisplay = ({ unitNumber, elements, onClick }) => {
+export default function UnitDisplay({ unitNumber, unit, onClick }) {
+  
+  const checkForPackingIssue = () => {
+    let color
+    for (const key in unit.packing) {
+      if (unit.packing[key].status === 'yellow') {
+        color='yellow'
+      }
+      if (unit.packing[key].status === 'red') {
+        color='red'
+      }
+    }
+    return color
+  }
+  const checkForPlungerIssue = () => {
+    let color
+    for (const key in unit.plunger) {
+      if (unit.plunger[key].status === 'yellow') {
+        color='yellow'
+      }
+      if (unit.plunger[key].status === 'red') {
+        color='red'
+      }
+    }
+    return color
+  }
+  const checkForStuffingBoxIssue = () => {
+    let color
+    for (const key in unit.stuffingBox) {
+      if (unit.stuffingBox[key].status === 'yellow') {
+        color='yellow'
+      }
+      if (unit.stuffingBox[key].status === 'red') {
+        color='red'
+      }
+    }
+    return color
+  }
+  const checkForDischargeSealIssue = () => {
+    let color
+    for (const key in unit.dischargeSeal) {
+      if (unit.dischargeSeal[key].status === 'yellow') {
+        color='yellow'
+      }
+      if (unit.dischargeSeal[key].status === 'red') {
+        color='red'
+      }
+    }
+    return color
+  }
+  const checkForSuctionSealIssue = () => {
+    let color
+    for (const key in unit.suctionSeal) {
+      if (unit.suctionSeal[key].status === 'yellow') {
+        color='yellow'
+      }
+      if (unit.suctionSeal[key].status === 'red') {
+        color='red'
+      }
+    }
+    return color
+  }
+  const checkForSeatIssue = () => {
+    let color
+    for (const key in unit.suctionSeat) {
+      if (unit.suctionSeat[key].status === 'yellow' || unit.dischargeSeat[key].status === 'yellow') {
+        color='yellow'
+      }
+      if (unit.suctionSeat[key].status === 'red' || unit.dischargeSeat[key].status === 'red') {
+        color='red'
+      }
+    }
+    return color
+  }
+
+  const checkForValveIssue = () => {
+    let color
+    for (const key in unit.suctionValve) {
+      if (unit.suctionValve[key].status === 'yellow' || unit.dischargeValve[key].status === 'yellow') {
+        color='yellow'
+      }
+      if (unit.suctionValve[key].status === 'red' || unit.dischargeValve[key].status === 'red') {
+        color='red'
+      }
+    }
+    return color
+  }
   return (
     <UnitContainer onClick={onClick}>
       <UnitNumber>{unitNumber}</UnitNumber>
       <ElementsContainer>
-        {elements.map((element, index) => (
-          <Circle key={index}>{element}</Circle>
-        ))}
+        <Circle color={checkForValveIssue()}>V</Circle>
+        <Circle color={checkForPackingIssue()}>P</Circle>
+        <Circle color={checkForSeatIssue()}>S</Circle>
+        <Circle color={checkForPlungerIssue()}>PL</Circle>
+        <Circle color={checkForStuffingBoxIssue()}>SB</Circle>
+        <Circle color={checkForDischargeSealIssue()}>DS</Circle>
+        <Circle color={checkForSuctionSealIssue()}>SS</Circle>
       </ElementsContainer>
     </UnitContainer>
   );
 };
-
-export default UnitDisplay;
