@@ -56,7 +56,7 @@ export default function Maintenance({data}) {
   }
   return (
     <Container>
-      <Title backButtonHref={"/maintenance"} Text={'Maintenance'}/>
+      <Title backButtonHref={"/maintenance"} Text={'Jobs'}/>
         <JobList>
             {data.map((item, index) => {
               return (
