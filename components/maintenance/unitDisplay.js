@@ -25,18 +25,19 @@ const UnitNumber = styled.div`
 const ElementsContainer = styled.div`
   display: flex;
   width: 100%;
+  flex-wrap: wrap;
 `;
 
 const Circle = styled.div`
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   border: 2px solid #0077B6;
   border-radius: 50%;
   display: flex;
   visibility:  ${props => props.color ? "visible" : "hidden"}; ;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 15px;
   font-weight: bold;
   color: #000;
   background-color: ${props => props.color};

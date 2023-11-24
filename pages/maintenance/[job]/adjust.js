@@ -60,19 +60,22 @@ const ActionButton = styled.button`
   transition: background-color 0.3s;
   font-size: 16px;
   font-weight: 600;
+  width: 100%;
+  margin-top: 50px;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: #218838;
   }
 `;
 
 const AddItemButton = styled.button`
   background-color: #28a745;
-  color: #fff;
+  color: #000;
   padding: 5px 10px;
   border: none;
   border-radius: 3px;
   cursor: pointer;
+  transition: background-color 0.3s;
   margin-top: 10px;
 
   &:hover {
@@ -83,6 +86,8 @@ const AddItemButton = styled.button`
 export default function AdjustJob({job}) {
   const [jobUpdate, setJobUpdate] = useState(job)
   const [isLoading, setIsLoading] = useState(false)
+
+  const router = useRouter()
 
   const moveUnitUp = (side, index) => {
     const updatedJob = { ...jobUpdate };
@@ -190,7 +195,7 @@ export default function AdjustJob({job}) {
       const newItem = { unit: newItemUnit };
 
       if (side === 'left') {
-        console.log(updatedJob.UnitsOnLeft.length)
+        
         updatedJob.unitsOnLeft.push(newItem);
       } else {
         updatedJob.unitsOnRight.push(newItem);
@@ -238,15 +243,16 @@ export default function AdjustJob({job}) {
         console.error('Error updating job:', error)
       }
       setIsLoading(false)
+      
     }
-    
+    router.push(`/maintenance/${job.jobNumber}`)
   }
   console.log('**')
   console.log(jobUpdate.unitsOnLeft)
   console.log(jobUpdate.unitsOnRight)
   return (
     <Container>
-        <Title backButtonHref={`/maintenance/${job.jobNumber}`} Text={"Adjust Units"}></Title>
+        <Title backButtonHref={`/maintenance/${job.jobNumber}`} Text={`Adjust Units for Job ${job.jobNumber}`}></Title>
         <UnitsContainer>
           <LeftUnits>
           <h3>Left</h3>
@@ -256,6 +262,7 @@ export default function AdjustJob({job}) {
                 <MoveableItem
                   key={`left-unit-${index}`}
                   item={item}
+                  side={'left'}
                   onMoveUp={() => moveUnitUp('left', index)}
                   onMoveDown={() => moveUnitDown('left', index)}
                   onSwapToOppositeSide={() => moveItemToOppositeSide('left', index)}
@@ -263,7 +270,7 @@ export default function AdjustJob({job}) {
                 />
               )}
             })}
-            <AddItemButton onClick={() => handleAddItem('left')}>Add Item</AddItemButton>
+            <AddItemButton onClick={() => handleAddItem('left')}>Add Unit</AddItemButton>
           </LeftUnits>
           <RightUnits>
             <h3>Right</h3>
@@ -273,6 +280,7 @@ export default function AdjustJob({job}) {
                   <MoveableItem
                   key={`right-unit-${index}`}
                   item={item}
+                  side={'right'}
                   onMoveUp={() => moveUnitUp('right', index)}
                   onMoveDown={() => moveUnitDown('right', index)}
                   onSwapToOppositeSide={() => moveItemToOppositeSide('right', index)}
@@ -280,7 +288,7 @@ export default function AdjustJob({job}) {
                 />
                 )}
               })}
-              <AddItemButton onClick={() => handleAddItem('right')}>Add Item</AddItemButton>
+              <AddItemButton onClick={() => handleAddItem('right')}>Add Unit</AddItemButton>
           </RightUnits>
         </UnitsContainer>
         <LoadingSpinner isLoading={isLoading}/>
