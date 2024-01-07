@@ -74,7 +74,7 @@ export default function Title({ backButtonHref, Text }) {
     <TitleContainer>
       <BackButton href={backButtonHref}>Back</BackButton>
       <TitleText>{Text}</TitleText>
-      {user ? <GreetingBox>Welcome, {user.name}</GreetingBox> : <GreetingBox>Please login to be able to modify anything</GreetingBox>}
+      {user ? <GreetingBox>Welcome, {user.name}</GreetingBox> : <GreetingBox>Login to be able to modify/create jobs</GreetingBox>}
       {user ? <LogoutButton href='/api/auth/logout'>Logout</LogoutButton> : <LoginButton href='/api/auth/login'>Login</LoginButton>}
     </TitleContainer>
   );
