@@ -11,9 +11,10 @@ const TitleContainer = styled.div`
 `;
 
 const TitleText = styled.h1`
-  font-size: 24px;
+  font-size: 22px;
   margin: 0;
   text-align: center;
+  padding: 8px;
 `;
 
 const BackButton = styled.a`
@@ -34,8 +35,8 @@ const BackButton = styled.a`
 
 const LoginButton = styled.a`
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 5px;
+  right: 10px;
   background-color: #007BFF;
   color: #fff;
   padding: 5px 10px;
@@ -49,8 +50,8 @@ const LoginButton = styled.a`
 
 const LogoutButton = styled.a`
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 5px;
+  right: 10px;
   background-color: #007BFF;
   color: #fff;
   padding: 5px 10px;
@@ -63,8 +64,8 @@ const LogoutButton = styled.a`
 `
 const GreetingBox = styled.p`
   position: absolute;
-  top: 50px;
-  right: 20px;
+  bottom: 0px;
+  right: 10px;
 `
 
 export default function Title({ backButtonHref, Text }) {

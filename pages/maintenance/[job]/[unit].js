@@ -20,6 +20,11 @@ const ExitButton = styled.div`
   background-color: #ff0000;
   color: #fff;
   z-index: 2;
+  cursor: pointer;
+  user-select: none;
+  &:hover {
+    background-color: #660000;
+  }
 `
 const GridContainer = styled.div`
     display: grid;

@@ -8,7 +8,7 @@ const UnitContainer = styled.div`
   align-items: center;
   border: 2px solid #0077B6;
   border-radius: 10px;
-  padding: 10px;
+  padding: 10px 5px;
   cursor: pointer;
   transition: border-color 0.3s ease-in-out;
 
@@ -29,8 +29,8 @@ const ElementsContainer = styled.div`
 `;
 
 const Circle = styled.div`
-  width: 35px;
-  height: 35px;
+  width: 25px;
+  height: 25px;
   border: 2px solid #0077B6;
   border-radius: 50%;
   display: flex;
