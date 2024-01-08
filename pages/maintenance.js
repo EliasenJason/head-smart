@@ -4,6 +4,8 @@ import Link from "next/link"
 import jobModel from "../lib/schemas/maintenance/jobSchema";
 import connectMongo from "../lib/mongodb";
 import { useRouter } from "next/router";
+import { useUser } from "@auth0/nextjs-auth0";
+
 
 const Container = styled.div`
   max-width: 800px;
@@ -16,6 +18,7 @@ const JobList = styled.div`
   flex-direction: column;
   gap: 10px;
   margin: 0 auto;
+  margin-top: 10px;
   justify-content: right;
   width: 100%;
 `;
@@ -49,6 +52,7 @@ const ActionButton = styled.button`
 `;
 
 export default function Maintenance({data}) {
+  
   const router = useRouter()
 
   const navigateToJob = (jobNumber) => {
@@ -56,7 +60,7 @@ export default function Maintenance({data}) {
   }
   return (
     <Container>
-      <Title backButtonHref={"/maintenance"} Text={'Jobs'}/>
+      <Title backButtonHref={"/"} Text={'Jobs'} />
         <JobList>
             {data.map((item, index) => {
               return (

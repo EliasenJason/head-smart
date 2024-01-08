@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth0/nextjs-auth0": "^1.7.0",
     "mongodb": "^6.1.0",
     "mongoose": "^7.6.2",
     "next": "12.3.0",

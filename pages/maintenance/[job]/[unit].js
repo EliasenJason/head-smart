@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import LoadingSpinner from "../../../components/maintenance/loadingSpinner";
+import ChatBox from "../../../components/maintenance/chatBox";
 
 const Container = styled.div`
   max-width: 800px;
@@ -89,7 +90,7 @@ export default function Unit({unit, job}) {
   const [isLoading, setIsLoading] = useState(false)
   
   const router = useRouter()
-
+  console.log(unitState)
   const handleStatusChange = (component, holeNumber) => {
     if (unitState[component][holeNumber].status === "green") {
       setUnitState({
@@ -186,7 +187,6 @@ export default function Unit({unit, job}) {
         <Component gridArea="dischargeSeat4" color={unitState.dischargeSeat[4].status} onClick={() => handleStatusChange("dischargeSeat", 4)}></Component>
         <Component gridArea="dischargeSeat5" color={unitState.dischargeSeat[5].status} onClick={() => handleStatusChange("dischargeSeat", 5)}></Component>
 
-
         <ComponentType gridArea="suctionSeat">Suction Seat</ComponentType>
         <Component gridArea="suctionSeat1" color={unitState.suctionSeat[1].status} onClick={() => handleStatusChange("suctionSeat", 1)}></Component>
         <Component gridArea="suctionSeat2" color={unitState.suctionSeat[2].status} onClick={() => handleStatusChange("suctionSeat", 2)}></Component>
@@ -229,6 +229,8 @@ export default function Unit({unit, job}) {
         <Component gridArea="dischargeSeal4" color={unitState.dischargeSeal[4].status} onClick={() => handleStatusChange("dischargeSeal", 4)}></Component>
         <Component gridArea="dischargeSeal5" color={unitState.dischargeSeal[5].status} onClick={() => handleStatusChange("dischargeSeal", 5)}></Component>
       </GridContainer>
+      {/* create chat window */}
+      <ChatBox unitNumber={unit.number} chatMessages={unit.messages} loading={setIsLoading} setUnitState={setUnitState} unitState={unitState} setIsLoading={setIsLoading} />
       <LoadingSpinner isLoading={isLoading} />
     </Container>
   )
