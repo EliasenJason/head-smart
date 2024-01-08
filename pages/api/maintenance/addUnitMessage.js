@@ -15,10 +15,11 @@ export default async function createUnits(req, res) {
     await connectMongo()
     let mongoResponse = await unitModel.findOneAndUpdate(
       filter,
-      { $push: { messages: update } }
+      { $push: { messages: update } },
+      {new: true}
       )
     console.log(mongoResponse)
-    res.json({ mongoResponse })
+    res.status(200).json(mongoResponse)
   } catch(error) {
     console.log(error)
     res.json({error})

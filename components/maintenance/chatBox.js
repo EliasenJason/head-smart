@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { useUser } from "@auth0/nextjs-auth0";
 
@@ -60,13 +60,21 @@ const SendButton = styled.button`
   cursor: pointer;
 `;
 
-export default function ChatBox({unitNumber, chatMessages}) {
+export default function ChatBox({unitNumber, chatMessages, setIsLoading}) {
   const [messages, setMessages] = useState(chatMessages);
   const [newMessage, setNewMessage] = useState('');
 
   const {user, error, isloading} = useUser()
   
-  console.log(chatMessages)
+  const messagesContainerRef = useRef();
+
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  //console.log(chatMessages)
   const formattedDate = (date) => {
     const options = { 
       year: 'numeric', 
@@ -76,12 +84,12 @@ export default function ChatBox({unitNumber, chatMessages}) {
       minute: 'numeric'  
     }
     return new Date(date).toLocaleDateString('en-US', options);
-  
   }
 
   const handleSendMessage = async () => {
+    setIsLoading(true)
     if (user?.name && newMessage !== '') {
-      setMessages([...messages, {message: newMessage, sender: user.name}]);
+      //setMessages([...messages, {message: newMessage, sender: user.name, _id: messages.length}]);
       let dataToBackend = {
         unit: unitNumber,
         message: newMessage,
@@ -97,7 +105,9 @@ export default function ChatBox({unitNumber, chatMessages}) {
       })
       if (res.ok) {
         console.log('Message sent successfully')
-        setNewMessage('');
+        const data = await res.json()
+        setMessages(data.messages)
+        setNewMessage('')
       }
       } catch (error) {
         console.error('Error sending message:', error)
@@ -106,14 +116,15 @@ export default function ChatBox({unitNumber, chatMessages}) {
     } else {
       console.log('you must be signed in and have a message written')
     }
+    setIsLoading(false)
   };
 
   const handleDeleteMessage = async (_id) => {
+    setIsLoading(true)
     let dataToBackend = {
       message_id: _id,
       unit: unitNumber,
     }
-    
     try {
       const res = await fetch('/api/maintenance/deleteUnitMessage', {
       method: 'POST',
@@ -123,19 +134,21 @@ export default function ChatBox({unitNumber, chatMessages}) {
       body: JSON.stringify(dataToBackend)
     })
     if (res.ok) {
-      console.log('Message sent successfully')
+      console.log('Message successfully deleted')
+      const data = await res.json()
+      setMessages(data.messages)
       setNewMessage('');
     }
     } catch (error) {
       console.error('Error sending message:', error)
       setNewMessage('')
     }
-    // question: how do i update the data?
+    setIsLoading(false)
   }
 
   return (
     <ChatBoxWrapper>
-      <MessagesContainer>
+      <MessagesContainer ref={messagesContainerRef}>
         {messages.map((messageObject, index) => (
           <MessageWrapper key={index}>
           <MessageContent>
@@ -149,7 +162,7 @@ export default function ChatBox({unitNumber, chatMessages}) {
       <InputContainer>
         <Input
           type="text"
-          placeholder="Type your message..."
+          placeholder="Create a comment for this unit..."
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
         />

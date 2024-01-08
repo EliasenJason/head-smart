@@ -41,6 +41,7 @@ const RightUnits = styled.div`
   margin: 1em;
 `
 const ActionButton = styled.button`
+  margin: 10px;
   background-color: #007BFF;
   color: #fff;
   padding: 10px 20px;

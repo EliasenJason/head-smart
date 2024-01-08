@@ -90,7 +90,7 @@ export default function Unit({unit, job}) {
   const [isLoading, setIsLoading] = useState(false)
   
   const router = useRouter()
-
+  console.log(unitState)
   const handleStatusChange = (component, holeNumber) => {
     if (unitState[component][holeNumber].status === "green") {
       setUnitState({
@@ -230,7 +230,7 @@ export default function Unit({unit, job}) {
         <Component gridArea="dischargeSeal5" color={unitState.dischargeSeal[5].status} onClick={() => handleStatusChange("dischargeSeal", 5)}></Component>
       </GridContainer>
       {/* create chat window */}
-      <ChatBox unitNumber={unit.number} chatMessages={unit.messages}/>
+      <ChatBox unitNumber={unit.number} chatMessages={unit.messages} loading={setIsLoading} setUnitState={setUnitState} unitState={unitState} setIsLoading={setIsLoading} />
       <LoadingSpinner isLoading={isLoading} />
     </Container>
   )
