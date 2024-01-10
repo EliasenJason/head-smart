@@ -247,7 +247,6 @@ export async function getServerSideProps(context) {
   const query = {number: unitNumber}
   console.log(query)
   let unit
-  // Make an API request to fetch job data based on the job number
   try {
     console.log('getJob route triggered')
     console.log('connecting to mongo')
