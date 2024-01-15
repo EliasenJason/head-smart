@@ -146,6 +146,7 @@ export default function ChatBox({unitNumber, chatMessages, setIsLoading}) {
     setIsLoading(false)
   }
 
+  
   return (
     <ChatBoxWrapper>
       <MessagesContainer ref={messagesContainerRef}>
