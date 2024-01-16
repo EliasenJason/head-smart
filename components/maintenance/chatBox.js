@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { useUser } from "@auth0/nextjs-auth0";
+import NotificationComponent from './notification';
 
 const ChatBoxWrapper = styled.div`
   width: 100%;
@@ -63,6 +64,9 @@ const SendButton = styled.button`
 export default function ChatBox({unitNumber, chatMessages, setIsLoading}) {
   const [messages, setMessages] = useState(chatMessages);
   const [newMessage, setNewMessage] = useState('');
+  const [showNotification, setShowNotification] = useState(false)
+  const [notificationMessage, setNotificationMessage] = useState('')
+  const [notificationInfo, setNotificationInfo] = useState({show: false, message: ''})
 
   const {user, error, isloading} = useUser()
   
@@ -89,7 +93,6 @@ export default function ChatBox({unitNumber, chatMessages, setIsLoading}) {
   const handleSendMessage = async () => {
     setIsLoading(true)
     if (user?.name && newMessage !== '') {
-      //setMessages([...messages, {message: newMessage, sender: user.name, _id: messages.length}]);
       let dataToBackend = {
         unit: unitNumber,
         message: newMessage,
@@ -113,8 +116,10 @@ export default function ChatBox({unitNumber, chatMessages, setIsLoading}) {
         console.error('Error sending message:', error)
         setNewMessage('')
       }
+    } else if (newMessage == '') {
+      setNotificationInfo({show: true, message: 'You cannot create a blank comment'})
     } else {
-      console.log('you must be signed in and have a message written')
+      setNotificationInfo({show: true, message: 'You must be logged in to create a comment'})
     }
     setIsLoading(false)
   };
@@ -169,6 +174,11 @@ export default function ChatBox({unitNumber, chatMessages, setIsLoading}) {
         />
         <SendButton onClick={handleSendMessage}>Send</SendButton>
       </InputContainer>
+      <NotificationComponent
+        show={notificationInfo.show}
+        message={notificationInfo.message}
+        onClose={() => setNotificationInfo({show: false, message: ""})}
+      />
     </ChatBoxWrapper>
   );
 };
