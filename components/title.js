@@ -70,7 +70,7 @@ const GreetingBox = styled.p`
 
 export default function Title({ backButtonHref, Text }) {
   const {user, error, isloading} = useUser()
-  console.log(user)
+  // console.log(user)
   return (
     <TitleContainer>
       <BackButton href={backButtonHref}>Back</BackButton>

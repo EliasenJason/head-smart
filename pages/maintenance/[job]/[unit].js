@@ -95,7 +95,9 @@ export default function Unit({unit, job}) {
   const [isLoading, setIsLoading] = useState(false)
   
   const router = useRouter()
-  console.log(unitState)
+
+  // console.log(unitState)
+
   const handleStatusChange = (component, holeNumber) => {
     if (unitState[component][holeNumber].status === "green") {
       setUnitState({

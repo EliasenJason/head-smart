@@ -78,7 +78,6 @@ export default function ChatBox({unitNumber, chatMessages, setIsLoading}) {
     }
   }, [messages]);
 
-  console.log(messages)
   const formattedDate = (date) => {
     const options = { 
       year: 'numeric', 
