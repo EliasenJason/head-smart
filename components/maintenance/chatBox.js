@@ -78,7 +78,7 @@ export default function ChatBox({unitNumber, chatMessages, setIsLoading}) {
     }
   }, [messages]);
 
-  //console.log(chatMessages)
+  console.log(messages)
   const formattedDate = (date) => {
     const options = { 
       year: 'numeric', 
@@ -124,30 +124,37 @@ export default function ChatBox({unitNumber, chatMessages, setIsLoading}) {
     setIsLoading(false)
   };
 
-  const handleDeleteMessage = async (_id) => {
+  const handleDeleteMessage = async (_id, message) => {
     setIsLoading(true)
-    let dataToBackend = {
-      message_id: _id,
-      unit: unitNumber,
+
+    if (user?.role.includes('admin') || user?.name === message.sender) {
+      let dataToBackend = {
+        message_id: _id,
+        unit: unitNumber,
+      }
+      try {
+        const res = await fetch('/api/maintenance/deleteUnitMessage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dataToBackend)
+      })
+      if (res.ok) {
+        console.log('Message successfully deleted')
+        const data = await res.json()
+        setMessages(data.messages)
+        setNewMessage('');
+      }
+      } catch (error) {
+        console.error('Error sending message:', error)
+        setNewMessage('')
+      }
+    } else {
+      setNotificationInfo({show: true, message: 'You are not authorized to delete this message'})
     }
-    try {
-      const res = await fetch('/api/maintenance/deleteUnitMessage', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(dataToBackend)
-    })
-    if (res.ok) {
-      console.log('Message successfully deleted')
-      const data = await res.json()
-      setMessages(data.messages)
-      setNewMessage('');
-    }
-    } catch (error) {
-      console.error('Error sending message:', error)
-      setNewMessage('')
-    }
+
+    
     setIsLoading(false)
   }
 
@@ -161,7 +168,7 @@ export default function ChatBox({unitNumber, chatMessages, setIsLoading}) {
             {messageObject.message}
             <MessageInfo>{`${messageObject.sender} wrote on: ${formattedDate(messageObject.timestamp)}`}</MessageInfo>
           </MessageContent>
-          <DeleteButton onClick={() => handleDeleteMessage(messageObject._id)}>Delete</DeleteButton>
+          <DeleteButton onClick={() => handleDeleteMessage(messageObject._id, messageObject)}>Delete</DeleteButton>
         </MessageWrapper>
         ))}
       </MessagesContainer>
