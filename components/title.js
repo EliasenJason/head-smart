@@ -35,7 +35,7 @@ const BackButton = styled.a`
 
 const LoginButton = styled.a`
   position: absolute;
-  top: 5px;
+  top: 10px;
   right: 10px;
   background-color: #007BFF;
   color: #fff;
@@ -50,7 +50,7 @@ const LoginButton = styled.a`
 
 const LogoutButton = styled.a`
   position: absolute;
-  top: 5px;
+  top: 10px;
   right: 10px;
   background-color: #007BFF;
   color: #fff;
@@ -62,21 +62,37 @@ const LogoutButton = styled.a`
   font-size: 14px;
   font-weight: 600;
 `
+const Profile = styled.a`
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: #007BFF;
+  color: #fff;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 14px;
+  font-weight: 600;
+`
+
 const GreetingBox = styled.p`
   position: absolute;
-  bottom: 0px;
-  right: 10px;
+  bottom: auto;
+  left: 10px;
 `
 
 export default function Title({ backButtonHref, Text }) {
   const {user, error, isloading} = useUser()
-  // console.log(user)
+  
   return (
     <TitleContainer>
       <BackButton href={backButtonHref}>Back</BackButton>
       <TitleText>{Text}</TitleText>
       {user ? <GreetingBox>Welcome, {user.name}</GreetingBox> : <GreetingBox>Login to be able to modify/create jobs</GreetingBox>}
       {user ? <LogoutButton href='/api/auth/logout'>Logout</LogoutButton> : <LoginButton href='/api/auth/login'>Login</LoginButton>}
+      {user?.role.includes('supervisor') && <Profile href="/maintenance/user/profile">My Profile</Profile>}
     </TitleContainer>
   );
 }
