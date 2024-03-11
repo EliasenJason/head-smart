@@ -9,6 +9,7 @@ import unitModel from '../../lib/schemas/maintenance/unitSchema';
 import checkForIssues from '../../lib/checks/checkForIssues';
 import Title from '../../components/title';
 import LoadingSpinner from '../../components/maintenance/loadingSpinner';
+import MaintenanceSummary from '../../components/maintenance/summary';
 
 const Container = styled.div`
   max-width: 800px;
@@ -40,6 +41,12 @@ const RightUnits = styled.div`
   gap: 1em;
   margin: 1em;
 `
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+`
 const ActionButton = styled.button`
   margin: 10px;
   background-color: #007BFF;
@@ -51,7 +58,7 @@ const ActionButton = styled.button`
   transition: background-color 0.3s;
   font-size: 16px;
   font-weight: 600;
-
+  
   &:hover {
     background-color: #0056b3;
   }
@@ -60,6 +67,7 @@ const ActionButton = styled.button`
 export default function JobDetail({ job }) {
   const [showDeletePopUp, setShowDeletePopUp] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [showMaintenanceSummary, setShowMaintenanceSummary] = useState(false)
   
   const router = useRouter()
 
@@ -129,10 +137,13 @@ export default function JobDetail({ job }) {
               })}
           </RightUnits>
         </UnitsContainer>
-        <ActionButton onClick={() => toggleDeletePopUp()}>Delete job</ActionButton>
-        <ActionButton onClick={() => adjustJob()}>Adjust job</ActionButton>
+        <ButtonContainer>
+          <ActionButton onClick={() => toggleDeletePopUp()}>Delete job</ActionButton>
+          <ActionButton onClick={() => adjustJob()}>Adjust job</ActionButton>
+        </ButtonContainer>
         {showDeletePopUp && <Confirm action={deleteJob} popUpToggle={toggleDeletePopUp}/>}
         <LoadingSpinner isLoading={isLoading}/>
+        <MaintenanceSummary show={showMaintenanceSummary} job={job}/>
       </Container>
     );
   }
