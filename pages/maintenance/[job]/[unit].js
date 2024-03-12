@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import LoadingSpinner from "../../../components/maintenance/loadingSpinner";
 import ChatBox from "../../../components/maintenance/chatBox";
+import NotificationComponent from "../../../components/maintenance/notification";
+import { useUser } from "@auth0/nextjs-auth0";
 
 const Container = styled.div`
   max-width: 800px;
@@ -93,46 +95,53 @@ height: 70px;
 export default function Unit({unit, job}) {
   const [unitState, setUnitState] = useState(unit)
   const [isLoading, setIsLoading] = useState(false)
+  const [notificationInfo, setNotificationInfo] = useState({show: false, message: ''})
   
   const router = useRouter()
-
+  const {user, error, isloading} = useUser()
   // console.log(unitState)
 
   const handleStatusChange = (component, holeNumber) => {
-    if (unitState[component][holeNumber].status === "green") {
-      setUnitState({
-        ...unitState,
-        [component]: {
-          ...unitState[component],
-          [holeNumber]: {
-            ...unitState[component][holeNumber],
-            status: 'yellow'
+    //TODO check if user is supervisor or admin, if not notification
+    if (user?.role?.includes('admin') || user?.role?.includes('supervisor')) {
+      if (unitState[component][holeNumber].status === "green") {
+        setUnitState({
+          ...unitState,
+          [component]: {
+            ...unitState[component],
+            [holeNumber]: {
+              ...unitState[component][holeNumber],
+              status: 'yellow'
+            }
           }
-        }
-      });
-    } else if (unitState[component][holeNumber].status === "yellow") {
-      setUnitState({
-        ...unitState,
-        [component]: {
-          ...unitState[component],
-          [holeNumber]: {
-            ...unitState[component][holeNumber],
-            status: 'red'
+        });
+      } else if (unitState[component][holeNumber].status === "yellow") {
+        setUnitState({
+          ...unitState,
+          [component]: {
+            ...unitState[component],
+            [holeNumber]: {
+              ...unitState[component][holeNumber],
+              status: 'red'
+            }
           }
-        }
-      });
-    } else if (unitState[component][holeNumber].status === "red") {
-      setUnitState({
-        ...unitState,
-        [component]: {
-          ...unitState[component],
-          [holeNumber]: {
-            ...unitState[component][holeNumber],
-            status: 'green'
+        });
+      } else if (unitState[component][holeNumber].status === "red") {
+        setUnitState({
+          ...unitState,
+          [component]: {
+            ...unitState[component],
+            [holeNumber]: {
+              ...unitState[component][holeNumber],
+              status: 'green'
+            }
           }
-        }
-      });
+        });
+      }
+    } else {
+      setNotificationInfo({show: true, message: 'You must be logged in and be a supervisor to adjust the status of components'})
     }
+    
   }
 
   const handleClose = async () => {
@@ -239,6 +248,11 @@ export default function Unit({unit, job}) {
       {/* create chat window */}
       <ChatBox unitNumber={unit.number} chatMessages={unit.messages} loading={setIsLoading} setUnitState={setUnitState} unitState={unitState} setIsLoading={setIsLoading} />
       <LoadingSpinner isLoading={isLoading} />
+      <NotificationComponent
+        show={notificationInfo.show}
+        message={notificationInfo.message}
+        onClose={() => setNotificationInfo({show: false, message: ""})}
+      />
     </Container>
   )
 }

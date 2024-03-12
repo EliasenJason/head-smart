@@ -8,6 +8,6 @@ module.exports = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ['www.gdenergyproducts.com']
+    domains: ['www.gdenergyproducts.com','lh3.googleusercontent.com' ]
   }
 }
