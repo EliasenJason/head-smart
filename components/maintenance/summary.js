@@ -4,6 +4,7 @@ import styled from 'styled-components';
 const IssueUnit = styled.span`
   color: #007BFF;
   font-weight: bold;
+  font-size: 21px;
 `;
 
 const IssueComponentType = styled.span`
@@ -107,7 +108,7 @@ console.log(unitMaintenanceArray);
       <h2>Units with Issues</h2>
       {Object.entries(groupedUnitsWithIssues).map(([unitNumber, componentTypes]) => (
         <UnitContainer key={unitNumber}>
-          <h3><IssueUnit>{unitNumber}</IssueUnit></h3>
+          <IssueUnit>{unitNumber}</IssueUnit>
           {Object.entries(componentTypes).map(([componentType, { numbers, status }]) => (
             <div key={componentType}>
               <IssueComponentType>{capitalizeFirstLetter(componentType)}:</IssueComponentType>

@@ -6,10 +6,11 @@ import Confirm from '../../components/maintenance/confirm';
 import UnitDisplay from '../../components/maintenance/unitDisplay';
 import jobModel from '../../lib/schemas/maintenance/jobSchema';
 import unitModel from '../../lib/schemas/maintenance/unitSchema';
-import checkForIssues from '../../lib/checks/checkForIssues';
 import Title from '../../components/title';
 import LoadingSpinner from '../../components/maintenance/loadingSpinner';
 import MaintenanceSummary from '../../components/maintenance/summary';
+import NotificationComponent from '../../components/maintenance/notification';
+import { useUser } from '@auth0/nextjs-auth0';
 
 const Container = styled.div`
   max-width: 800px;
@@ -68,8 +69,11 @@ export default function JobDetail({ job }) {
   const [showDeletePopUp, setShowDeletePopUp] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [showMaintenanceSummary, setShowMaintenanceSummary] = useState(false)
+  const [notificationInfo, setNotificationInfo] = useState({show: false, message: ''})
+  
   
   const router = useRouter()
+  const {user, error, isloading} = useUser()
 
   const toggleDeletePopUp = () => {
     showDeletePopUp ? setShowDeletePopUp(false) : setShowDeletePopUp(true)
@@ -80,25 +84,30 @@ export default function JobDetail({ job }) {
   }
 
   const deleteJob = async() => {
-    setIsLoading(true)
-    try {
-      const res = await fetch('/api/maintenance/deleteJob', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(job.jobNumber)
-      })
-      if (res.ok) {
-        console.log('job deleted')
-        router.push("/maintenance/")
-      } else {
-        console.error('Error in deleting job:', res.statusText)
+    if (user?.role?.includes('admin') || user?.role?.includes('supervisor')) {
+      setIsLoading(true)
+      try {
+        const res = await fetch('/api/maintenance/deleteJob', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(job.jobNumber)
+        })
+        if (res.ok) {
+          console.log('job deleted')
+          router.push("/maintenance/")
+        } else {
+          console.error('Error in deleting job:', res.statusText)
+        }
+      } catch (error) {
+        console.error('Error deleting job:', error)
       }
-    } catch (error) {
-      console.error('Error deleting job:', error)
+      setIsLoading(false)
+    } else {
+      setNotificationInfo({show: true, message: 'You must be logged in and be a supervisor to delete a job'})
     }
-    setIsLoading(false)
+    
   }
     return (
       <Container>
@@ -144,6 +153,11 @@ export default function JobDetail({ job }) {
         {showDeletePopUp && <Confirm action={deleteJob} popUpToggle={toggleDeletePopUp}/>}
         <LoadingSpinner isLoading={isLoading}/>
         <MaintenanceSummary show={showMaintenanceSummary} job={job}/>
+        <NotificationComponent
+        show={notificationInfo.show}
+        message={notificationInfo.message}
+        onClose={() => setNotificationInfo({show: false, message: ""})}
+      />
       </Container>
     );
   }
