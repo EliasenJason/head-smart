@@ -79,8 +79,13 @@ export default function JobDetail({ job }) {
     showDeletePopUp ? setShowDeletePopUp(false) : setShowDeletePopUp(true)
   }
 
+  console.log(job)
   const adjustJob = () => {
-    router.push(`/maintenance/[job]/adjust`, `/maintenance/${job.jobNumber}/adjust`)
+    if (user?.role?.includes('admin') || user?.role?.includes('supervisor')) {
+      router.push(`/maintenance/[job]/adjust`, `/maintenance/${job.jobNumber}/adjust`)
+    } else {
+      setNotificationInfo({show: true, message: 'You must be logged in and be a supervisor to adjust a job'})
+    }
   }
 
   const deleteJob = async() => {
@@ -123,6 +128,7 @@ export default function JobDetail({ job }) {
                     onClick={() => {
                       router.push(`/maintenance/${job.jobNumber}/${unit.number}`)
                     }}
+                    messages={unit.messages}
                     unit={unit}
                     unitNumber={unit.number}  
                   />
@@ -139,6 +145,7 @@ export default function JobDetail({ job }) {
                       onClick={() => {
                         router.push(`/maintenance/${job.jobNumber}/${unit.number}`)
                       }}
+                      messages={unit.messages}
                       unit={unit}
                       unitNumber={unit.number}  
                     />
