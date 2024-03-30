@@ -27,7 +27,6 @@ const TopContainer = styled.div`
 const UnitNumber = styled.div`
   font-weight: bold;
   margin-bottom: 10px;
-  border: solid red 1px;
 `;
 
 const MessageIndicatorContainer = styled.div`
