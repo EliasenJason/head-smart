@@ -101,7 +101,6 @@ const Circle = styled.div`
 `;
 
 export default function UnitDisplay({ unitNumber, unit, onClick, messages }) {
-  console.log(messages)
   const [showMessagesPopUp, setMessagesPopUp] = useState(false)
 
 

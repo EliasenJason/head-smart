@@ -74,18 +74,23 @@ export default function JobDetail({ job }) {
   
   const router = useRouter()
   const {user, error, isloading} = useUser()
-
+  
   const toggleDeletePopUp = () => {
     showDeletePopUp ? setShowDeletePopUp(false) : setShowDeletePopUp(true)
   }
 
-  console.log(job)
   const adjustJob = () => {
     if (user?.role?.includes('admin') || user?.role?.includes('supervisor')) {
       router.push(`/maintenance/[job]/adjust`, `/maintenance/${job.jobNumber}/adjust`)
     } else {
       setNotificationInfo({show: true, message: 'You must be logged in and be a supervisor to adjust a job'})
     }
+  }
+  
+  const seeAssignedMaintenance = () => {
+    
+      router.push(`/maintenance/[job]/assignedMaintenance`, `/maintenance/${job.jobNumber}/assignedMaintenance`)
+    
   }
 
   const deleteJob = async() => {
@@ -155,11 +160,12 @@ export default function JobDetail({ job }) {
         </UnitsContainer>
         <ButtonContainer>
           <ActionButton onClick={() => toggleDeletePopUp()}>Delete job</ActionButton>
+          {job.currentMaintenance && <ActionButton onClick={() => seeAssignedMaintenance()}>Assigned Maintenance</ActionButton>}
           <ActionButton onClick={() => adjustJob()}>Adjust job</ActionButton>
         </ButtonContainer>
         {showDeletePopUp && <Confirm action={deleteJob} popUpToggle={toggleDeletePopUp}/>}
         <LoadingSpinner isLoading={isLoading}/>
-        <MaintenanceSummary show={showMaintenanceSummary} job={job}/>
+        <MaintenanceSummary show={showMaintenanceSummary} job={job} user={user} />
         <NotificationComponent
         show={notificationInfo.show}
         message={notificationInfo.message}
