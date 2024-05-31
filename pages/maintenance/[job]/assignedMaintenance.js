@@ -3,6 +3,8 @@ import connectMongo from "../../../lib/mongodb"
 import jobModel from "../../../lib/schemas/maintenance/jobSchema"
 import styled from 'styled-components'
 import { useRouter } from "next/router";
+import { useUser } from '@auth0/nextjs-auth0';
+import { set } from "mongoose";
 
 const Container = styled.div`
   max-width: 800px;
@@ -110,9 +112,72 @@ const EmailButton = styled.button`
   }
 `;
 
+const EmailContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  padding: 10px;
+  background: #f9f9f9;
+
+  @media print {
+    display: none;
+  }
+`
+
+const SupervisorDropDown = styled.select`
+  flex: 1 1 60%;
+  margin-bottom: .5em;
+
+  @media print {
+    display: none;
+  }
+`
+const DatavanDropDown = styled.select`
+  flex: 1 1 60%;
+  margin-bottom: .5em;
+
+  @media print {
+    display: none;
+  }
+`
+
 export default function AssignedMaintenance({maintenance}) {
   //const [maintenanceState, setMaintenanceState] = useState(maintenance)
+  const { user, error, isLoading } = useUser()
+  const [userContacts, setUserContacts] = useState([])
+  const [supervisor, setSupervisorEmail] = useState('')
+  const [datavan, setDatavanEmail] = useState('')
+
   const router = useRouter()
+
+  useEffect(() => {
+    const getContacts = async () => {
+        try {
+            const response = await fetch(`/api/maintenance/getContacts?subscriber=${user.sub}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data)
+                setUserContacts(data.teamMembers);
+            } else {
+                console.error('Error:', response.status);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    if (user) {
+        getContacts();
+    }
+}, [user, router.asPath]);
 
   const handleGoBack = () => {
     router.back()
@@ -126,19 +191,18 @@ export default function AssignedMaintenance({maintenance}) {
     try {
       let emailBody = 'Assigned maintenance\n\n';
       let emailTo = '';
+      let emailCc = '';
   
       Object.entries(maintenance).forEach(([unitNumber, componentTypes]) => {
-        emailBody += `Unit ${unitNumber}:\n`;
+        emailBody += `Unit ${unitNumber}\n`;
         if (componentTypes.fixer) {
           emailBody += `Assigned to: ${componentTypes.fixer.name}\n`;
           emailTo += `${componentTypes.fixer.email},`;
         }
+  
         Object.entries(componentTypes).forEach(([componentTypeKey, { numbers, status }]) => {
           if (componentTypeKey !== 'fixer') {
-            emailBody += `  ${componentTypeKey.charAt(0).toUpperCase() + componentTypeKey.slice(1)}:\n`;
-            numbers.forEach((number, index) => {
-              emailBody += `    ${number} (Status: ${status[index]})\n`;
-            });
+            emailBody += `${componentTypeKey}: ${numbers.join(', ')}\n`;
           }
         });
         emailBody += '\n';
@@ -146,8 +210,20 @@ export default function AssignedMaintenance({maintenance}) {
   
       // Remove the trailing comma from the emailTo string
       emailTo = emailTo.slice(0, -1);
+
+      // Add the supervisor and datavan email addresses to the Cc field
+    if (supervisor) {
+      emailCc += supervisor;
+    }
+    if (datavan) {
+      if (emailCc) {
+        emailCc += `,${datavan}`;
+      } else {
+        emailCc = datavan;
+      }
+    }
   
-      const mailtoLink = `mailto:${emailTo}?subject=You have been assigned pump maintenance&body=${encodeURIComponent(emailBody)}`;
+    const mailtoLink = `mailto:${emailTo}?cc=${encodeURIComponent(emailCc)}&subject=You have been assigned pump maintenance&body=${encodeURIComponent(emailBody)}`;
       window.open(mailtoLink, '_blank');
     } catch (error) {
       console.error('Error in handleEmail:', error);
@@ -212,7 +288,41 @@ export default function AssignedMaintenance({maintenance}) {
         </UnitContainer>
       ))}
       <PrintButton onClick={handlePrint}>Print Assigned Maintenance</PrintButton>
-      <EmailButton onClick={handleEmail}>Email Assigned Maintenance</EmailButton>
+      
+      <EmailContainer>
+        <h3>Select a supervisor and datavan operator if you would like to CC them in the email</h3>
+        <SupervisorDropDown onChange={(event) => {
+          if (event.target.value) {
+            setSupervisorEmail(event.target.value);
+          } else {
+            setSupervisorEmail('');
+          }
+        }}>
+          <option value="">Select a Supervisor</option>
+          {userContacts.filter((member) => member.role === 'supervisor')
+          .map((member) => (
+              <option key={member._id} value={member.email}>
+                {member.name}
+              </option>
+            ))}
+        </SupervisorDropDown>
+        <DatavanDropDown onChange={(event) => {
+          if (event.target.value) {
+            setDatavanEmail(event.target.value);
+          } else {
+            setDatavanEmail('');
+          }
+        }}>
+          <option value="">Select a Datavan</option>
+          {userContacts.filter((member) => member.role === 'datavan')
+          .map((member) => (
+              <option key={member._id} value={member.email}>
+                {member.name}
+              </option>
+            ))}
+        </DatavanDropDown>
+        <EmailButton onClick={handleEmail}>Email Assigned Maintenance</EmailButton>
+      </EmailContainer>
     </Container>
     )
 }

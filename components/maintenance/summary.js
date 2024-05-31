@@ -218,7 +218,8 @@ allUnits.forEach(unit => {
             }
           }}>
             <option value="">Assign to team member</option>
-            {userContacts.map((member) => (
+            {userContacts.filter((member) => member.role === 'operator')
+            .map((member) => (
               <option key={member._id} value={JSON.stringify({ name: member.name, email: member.email, id: member._id })}>
                 {member.name}
               </option>

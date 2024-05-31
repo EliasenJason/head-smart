@@ -5,28 +5,33 @@ export default async function createContact(req, res) {
   try {
     await connectMongo()
 
-    const { userEmail, userName, subscriber } = req.body
+    const { userEmail, userName, subscriber, userRole } = req.body
 
-    if (!req.body.hasOwnProperty('userEmail') || !req.body.hasOwnProperty('userName') || !req.body.hasOwnProperty('subscriber')) {
+    if (!req.body.hasOwnProperty('userEmail') || !req.body.hasOwnProperty('userName') || !req.body.hasOwnProperty('subscriber')|| !req.body.hasOwnProperty('userRole')) {
       return res.status(400).json({ error: 'Missing required properties in request body, request body must contain subscriber, userName and userEmail' });
     }
 
     let contact = await contactSchema.findOne({ subscriber })
 
     const newTeamMember = {
-      subscriber: subscriber,
       name: userName,
-      email: userEmail
+      email: userEmail,
+      role: userRole
     }
+    console.log('this is the new team member: ')
+    console.log(newTeamMember)
 
     if (contact) {
-      console.log(contact)
+      // console.log(contact)
       // If the user exists, add the new teamMembers to the teamMembers array only if the teamMember doesn't already exist
-      const userSubscriber = contact.teamMembers.find(member => member.subscriber === newTeamMember.subscriber);
+      const userSubscriber = contact.teamMembers.find(teamMember => teamMember.subscriber === subscriber);
       if (!userSubscriber) {
         console.log('user exists, adding a team member')
+        console.log('Contact before update:', contact);
         contact.teamMembers.push(newTeamMember);
         const updatedContact = await contact.save();
+        console.log('Contact after update:', updatedContact);
+        console.log(updatedContact)
         res.status(200).json(updatedContact);
       } else {
         res.status(200).json({ message: 'Team member already exists' });

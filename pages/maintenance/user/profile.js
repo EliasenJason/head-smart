@@ -6,10 +6,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import NotificationComponent from "../../../components/maintenance/notification";
 
-/* 
-  create a user profile page
-*/
-
 const Container = styled.div`
   max-width: 800px;
   margin: 0 auto;
@@ -85,6 +81,8 @@ export default function Team() {
   const { user, error, isLoading } = useUser()
   const [contacts, setContacts] = useState([])
   const [notificationInfo, setNotificationInfo] = useState({show: false, message: ''})
+  const [filteredContacts, setFilteredContacts] = useState(contacts);
+
 
   const router = useRouter();
 
@@ -115,12 +113,15 @@ export default function Team() {
         }
     }, [user, router.asPath]);
 
+    
+
   const addContactForUser = async (event) => {
     event.preventDefault()
     const userName = event.target[0].value
     const userEmail = event.target[1].value
+    const userRole = event.target[2].value;
+    console.log(userRole)
     
-
     const duplicateEmail = contacts.find(contact => contact.email === userEmail)
 
     if (!duplicateEmail && user) {
@@ -131,7 +132,7 @@ export default function Team() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ userEmail, userName, subscriber })
+            body: JSON.stringify({ userEmail, userName, subscriber, userRole })
         });
   
         if (response.ok) {
@@ -173,6 +174,19 @@ export default function Team() {
       });
     }
   };
+  const filterContacts = (role) => {
+    if (role === 'all') {
+      setFilteredContacts(contacts);
+    } else {
+      setFilteredContacts(contacts.filter((contact) => contact.role === role));
+    }
+  };
+
+  useEffect(() => {
+    filterContacts('all');
+  }, [contacts]);
+
+
   return (
       <Container>
           <Title backButtonHref={"/maintenance"}></Title>
@@ -192,22 +206,37 @@ export default function Team() {
             <SideContainer>
             <h2>Create New Contact</h2>
             <form onSubmit={addContactForUser}>
-              <label for="username">Username:</label>
+              <label htmlFor="username">Username:</label>
               <input type="text" id="username" />
 
-              <label for="email">Email:</label> 
+              <label htmlFor="email">Email:</label>
               <input type="email" id="email" />
+
+              <label htmlFor="role">Role:</label>
+              <select id="role">
+                <option value="">Select a role</option>
+                <option value="operator">Operator</option>
+                <option value="supervisor">Supervisor</option>
+                <option value="datavan">Datavan</option>
+              </select>
 
               <input type="submit" value="Create Contact" />
             </form>
             </SideContainer>
             <SideContainer>
               <h2>Current Contacts</h2>
-              {contacts.map((contact) => (
+              <p>filter by:</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                <button onClick={() => filterContacts('all')}>All</button>
+                <button onClick={() => filterContacts('operator')}>Operator</button>
+                <button onClick={() => filterContacts('supervisor')}>Supervisor</button>
+                <button onClick={() => filterContacts('datavan')}>Datavan</button>
+              </div>
+              {filteredContacts.map((contact) => (
                 <ContactItem key={contact._id}>
                   <div>
-                  <ContactName>{contact.name}</ContactName>
-                  <ContactEmail>{contact.email}</ContactEmail>
+                    <ContactName>{contact.name}</ContactName>
+                    <ContactEmail>{contact.email}</ContactEmail>
                   </div>
                   <DeleteButton onClick={() => deleteMember(contact)}>Delete</DeleteButton>
                 </ContactItem>
