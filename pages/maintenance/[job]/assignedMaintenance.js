@@ -178,7 +178,7 @@ export default function AssignedMaintenance({maintenance}) {
     if (user) {
         getContacts();
     }
-}, [user, router.asPath]);
+}, [user]);
 
   const handleGoBack = () => {
     router.back()
