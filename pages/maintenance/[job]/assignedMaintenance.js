@@ -152,33 +152,33 @@ export default function AssignedMaintenance({maintenance}) {
 
   const router = useRouter()
   console.log(`this is before the useEffect: ${user}`)
-  useEffect(() => {
-    const getContacts = async () => {
-        try {
-            const response = await fetch(`/api/maintenance/getContacts?subscriber=${user.sub}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+  // useEffect(() => {
+  //   const getContacts = async () => {
+  //       try {
+  //           const response = await fetch(`/api/maintenance/getContacts?subscriber=${user.sub}`, {
+  //               method: 'GET',
+  //               headers: {
+  //                   'Content-Type': 'application/json'
+  //               }
+  //           });
 
-            if (response.ok) {
-                console.log('Contacts fetched successfully');
-                const data = await response.json();
-                console.log(data)
-                setUserContacts(data.teamMembers);
-            } else {
-                console.error('Error:', response.status);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
+  //           if (response.ok) {
+  //               console.log('Contacts fetched successfully');
+  //               const data = await response.json();
+  //               console.log(data)
+  //               setUserContacts(data.teamMembers);
+  //           } else {
+  //               console.error('Error:', response.status);
+  //           }
+  //       } catch (error) {
+  //           console.error('Error:', error);
+  //       }
+  //   }
 
-    if (user) {
-        getContacts();
-    }
-}, [user]);
+  //   if (user) {
+  //       getContacts();
+  //   }
+  // }, [user]);
 
   const handleGoBack = () => {
     router.back()
