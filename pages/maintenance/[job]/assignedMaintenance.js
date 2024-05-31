@@ -151,7 +151,7 @@ export default function AssignedMaintenance({maintenance}) {
   const [datavan, setDatavanEmail] = useState('')
 
   const router = useRouter()
-
+  console.log(`this is before the useEffect: ${user}`)
   useEffect(() => {
     const getContacts = async () => {
         try {
@@ -163,6 +163,7 @@ export default function AssignedMaintenance({maintenance}) {
             });
 
             if (response.ok) {
+                console.log('Contacts fetched successfully');
                 const data = await response.json();
                 console.log(data)
                 setUserContacts(data.teamMembers);
