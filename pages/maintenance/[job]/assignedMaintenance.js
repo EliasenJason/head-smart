@@ -1,10 +1,9 @@
-import { useState,useEffect } from "react"
+import { useState, useEffect } from "react"
 import connectMongo from "../../../lib/mongodb"
 import jobModel from "../../../lib/schemas/maintenance/jobSchema"
 import styled from 'styled-components'
 import { useRouter } from "next/router";
-import { useUser } from '@auth0/nextjs-auth0';
-import { set } from "mongoose";
+import { useUser } from '@auth0/nextjs-auth0'
 
 const Container = styled.div`
   max-width: 800px;
@@ -144,7 +143,6 @@ const DatavanDropDown = styled.select`
 `
 
 export default function AssignedMaintenance({maintenance}) {
-  //const [maintenanceState, setMaintenanceState] = useState(maintenance)
   const { user, error, isLoading } = useUser()
   const [userContacts, setUserContacts] = useState([])
   const [supervisor, setSupervisorEmail] = useState('')
@@ -152,33 +150,33 @@ export default function AssignedMaintenance({maintenance}) {
 
   const router = useRouter()
   console.log(`this is before the useEffect: ${user}`)
-  // useEffect(() => {
-  //   const getContacts = async () => {
-  //       try {
-  //           const response = await fetch(`/api/maintenance/getContacts?subscriber=${user.sub}`, {
-  //               method: 'GET',
-  //               headers: {
-  //                   'Content-Type': 'application/json'
-  //               }
-  //           });
+  useEffect(() => {
+    const getContacts = async () => {
+        try {
+            const response = await fetch(`/api/maintenance/getContacts?subscriber=${user.sub}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
 
-  //           if (response.ok) {
-  //               console.log('Contacts fetched successfully');
-  //               const data = await response.json();
-  //               console.log(data)
-  //               setUserContacts(data.teamMembers);
-  //           } else {
-  //               console.error('Error:', response.status);
-  //           }
-  //       } catch (error) {
-  //           console.error('Error:', error);
-  //       }
-  //   }
+            if (response.ok) {
+                console.log('Contacts fetched successfully');
+                const data = await response.json();
+                console.log(data)
+                setUserContacts(data.teamMembers);
+            } else {
+                console.error('Error:', response.status);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
 
-  //   if (user) {
-  //       getContacts();
-  //   }
-  // }, [user]);
+    if (user) {
+        getContacts();
+    }
+  }, [user]);
 
   const handleGoBack = () => {
     router.back()
