@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+import LoadingSpinner from './loadingSpinner';
+import Popup from './popup';
 
 const IssueUnit = styled.span`
   color: #007BFF;
@@ -54,38 +56,34 @@ const ActionButton = styled.button`
   }
 `;
 
-export default function Summary({ job, user }) {
+export default function Summary({ job, user, setHasMaintenanceAssigned, hasMaintenanceAssigned }) {
   const [unitMaintenance, setUnitMaintenance] = useState()
   const [userContacts, setUserContacts] = useState()
+  const [isLoading, setIsLoading] = useState(false)
+  const [showReAssignPopup, setShowReAssignPopup] = useState(false)
+  const [showNoAssignmentPopup,setShowNoAssignmentPopup] = useState(false)
 
   const router = useRouter()
-  
+
   //get contacts for user.sub on page load using useEffect and api route getContacts.js
     useEffect(() => {
       if (user && user.sub) {
         fetch(`/api/maintenance/getContacts?subscriber=${user.sub}`)
           .then(res => res.json())
           .then(data => {
-            // console.log(data.teamMembers);
-            setUserContacts(data.teamMembers);
+            setUserContacts(data.teamMembers)
           });
       }
     }, [user]);
 
-
-
-  // useEffect(() => {
-  //   console.log(unitMaintenance)
-  // }, [unitMaintenance])
-
   if (!job || !job.unitsOnLeft || !job.unitsOnRight) {
-    return <div>No units data available</div>;
+    return <div>No units data available</div>
   }
 
-  const allUnits = job.unitsOnLeft.concat(job.unitsOnRight);
+  const allUnits = job.unitsOnLeft.concat(job.unitsOnRight)
 
   // Get all component types
-  const componentTypes = [...new Set(allUnits.flatMap(unit => Object.keys(unit)).filter(key => key !== '_id' && key !== 'number' && key !== 'type'))];
+  const componentTypes = [...new Set(allUnits.flatMap(unit => Object.keys(unit)).filter(key => key !== '_id' && key !== 'number' && key !== 'type'))]
   
   // Filter units with issues and group them by unit number and component type
   const unitsWithIssues = allUnits.flatMap(unit => {
@@ -94,7 +92,7 @@ export default function Summary({ job, user }) {
       .flatMap(([componentType, componentData]) => {
         return Object.entries(componentData)
           .filter(([componentNumber, component]) => component.status === 'red' || component.status === 'yellow')
-          .map(([componentNumber, component]) => ({ ...component, componentType, componentNumber, unitNumber: unit.number }));
+          .map(([componentNumber, component]) => ({ ...component, componentType, componentNumber, unitNumber: unit.number }))
       });
   });
 
@@ -103,13 +101,13 @@ export default function Summary({ job, user }) {
   // Group units with issues by unit number
   const groupedUnitsWithIssues = unitsWithIssues.reduce((acc, issue) => {
     if (!acc[issue.unitNumber]) {
-      acc[issue.unitNumber] = {};
+      acc[issue.unitNumber] = {}
     }
     if (!acc[issue.unitNumber][issue.componentType]) {
-      acc[issue.unitNumber][issue.componentType] = { numbers: [], status: [] };
+      acc[issue.unitNumber][issue.componentType] = { numbers: [], status: [] }
     }
-    acc[issue.unitNumber][issue.componentType].numbers.push(issue.componentNumber);
-    acc[issue.unitNumber][issue.componentType].status.push(issue.status);
+    acc[issue.unitNumber][issue.componentType].numbers.push(issue.componentNumber)
+    acc[issue.unitNumber][issue.componentType].status.push(issue.status)
     return acc;
   }, {});
 
@@ -117,15 +115,15 @@ export default function Summary({ job, user }) {
   unitMaintenance === undefined && setUnitMaintenance(groupedUnitsWithIssues)
 
   if (Object.keys(groupedUnitsWithIssues).length === 0) {
-    return <div>No units with issues found</div>;
+    return <div>No units with issues found</div>
   }
 
   const capitalizeFirstLetter = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1).replace(/([A-Z])/g, ' $1');
+    return string.charAt(0).toUpperCase() + string.slice(1).replace(/([A-Z])/g, ' $1')
   };
 
 // Initialize an array to store unit maintenance data
-const unitMaintenanceArray = [];
+const unitMaintenanceArray = []
 
 // Iterate over each unit
 allUnits.forEach(unit => {
@@ -171,15 +169,17 @@ allUnits.forEach(unit => {
     setUnitMaintenance(newUnitMaintenance)
   };
 
-  const handleAssignMaintenance = async () => {
-    const assignedMaintenance = { ...unitMaintenance };
+  const assignMaintenance = async () => {
+    const assignedMaintenance = { ...unitMaintenance }
+    console.log(unitMaintenance)
+
+    //remove any units that do not have a fixer assigned to them
     Object.keys(assignedMaintenance).forEach(unitNumber => {
       if (!assignedMaintenance[unitNumber].fixer) {
-        delete assignedMaintenance[unitNumber];
+        delete assignedMaintenance[unitNumber]
       }
     });
-    // console.log(assignedMaintenance)
-    // use api route assignMaintenanceToJob to assign maintenance to the job for currentMaintenance
+    
     try {
       const response = await fetch('/api/maintenance/assignMaintenanceToJob', {
         method: 'POST',
@@ -188,19 +188,60 @@ allUnits.forEach(unit => {
         },
         body: JSON.stringify({ maintenance: assignedMaintenance, jobNumber: job.jobNumber })
       });
-    
+
       if (response.ok) {
         console.log('Maintenance assigned successfully');
-        const responseData = await response.json();
-        console.log(responseData);
+        const responseData = await response.json()
+        console.log(responseData)
+        setHasMaintenanceAssigned(true)
       } else {
         const errorData = await response.json();
-        console.error('Failed to assign maintenances:', errorData.message);
+        console.error('Failed to assign maintenances:', errorData.message)
       }
     } catch (error) {
-      console.error('Error assigning maintenance!:', error.message);
+      console.error('Error assigning maintenance!:', error.message)
     }
+    
+  };
+
+  const handleAssignMaintenance = () => {
+    setIsLoading(true)
+    
+    //check if user has assigned a fixer to at least one unit
+    const hasAnyUnitsAssigned = Object.values(unitMaintenance).some(unit => unit.fixer);
+
+    //check if at least one unit has an assigned fixer than check if maintenance has already been assigned
+    if (hasAnyUnitsAssigned) {
+      if (hasMaintenanceAssigned) {
+        setShowReAssignPopup(true)
+      } else {
+        assignMaintenance()
+      }
+  } else {
+    setShowReAssignPopup(false)
+    setShowNoAssignmentPopup(true)
   }
+
+  setIsLoading(false)
+  };
+
+  const handlePopupConfirm = () => {
+    setShowReAssignPopup(false)
+    assignMaintenance()
+  };
+  
+  const handlePopupCancel = () => {
+    setShowReAssignPopup(false)
+  };
+
+  const handleNoAssignmentPopupConfirm = () => {
+    setShowNoAssignmentPopup(false)
+  };
+  
+  const handleNoAssignmentPopupCancel = () => {
+    setShowNoAssignmentPopup(false)
+  };
+
   return (
     <div>
     <h2>Units with Issues</h2>
@@ -243,6 +284,21 @@ allUnits.forEach(unit => {
       </UnitContainer>
     ))}
     {user?.role?.includes('supervisor') && <ActionButton onClick={() => handleAssignMaintenance()}>Assign Maintenance</ActionButton>}
+    <Popup
+      isOpen={showReAssignPopup}
+      onConfirm={handlePopupConfirm}
+      onCancel={handlePopupCancel}
+      title="Reassign Maintenance"
+      message="Maintenance has already been assigned. Do you want to reassign it?"
+    />
+    <Popup
+      isOpen={showNoAssignmentPopup}
+      onConfirm={handleNoAssignmentPopupConfirm}
+      onCancel={handleNoAssignmentPopupCancel}
+      title="Assign Maintenance"
+      message="You must assign a team member to at least one unit."
+    />
+    <LoadingSpinner isLoading={isLoading} />
   </div>
   );
 };

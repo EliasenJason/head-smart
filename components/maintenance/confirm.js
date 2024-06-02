@@ -25,14 +25,14 @@ const ButtonsContainer = styled.div`
   margin-top: 20px;
 `;
 
-export default function Confirm({action, popUpToggle}) {
+export default function Confirm({title, description, action, popUpToggle}) {
 
   return (
     <PopUp>
       <PopUpContent>
       <ButtonsContainer>
-        <h2>Delete Confirmation</h2>
-        <p>Are you sure you want to delete this Job?</p>
+        <h2>{title}</h2>
+        <p>{description}</p>
         <button onClick={() => action()}>Yes</button>
         <button onClick={() => popUpToggle()}>No</button>
       </ButtonsContainer>

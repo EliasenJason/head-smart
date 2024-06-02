@@ -149,7 +149,7 @@ export default function AssignedMaintenance({maintenance}) {
   const [datavan, setDatavanEmail] = useState('')
 
   const router = useRouter()
-  console.log(`this is before the useEffect: ${user}`)
+
   useEffect(() => {
     const getContacts = async () => {
         try {
@@ -178,8 +178,12 @@ export default function AssignedMaintenance({maintenance}) {
     }
   }, [user]);
 
-  const handleGoBack = () => {
-    router.back()
+  const handleGoBack = async () => {
+    // Get the previous page's path
+    const previousPath = router.asPath.split('/').slice(0, -1).join('/')
+
+    // Navigate to the previous page, forcing a re-run of getServerSideProps
+    await router.push(previousPath, previousPath, { scroll: false })
   }
 
   const handlePrint = () => {

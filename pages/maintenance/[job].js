@@ -1,6 +1,6 @@
 import connectMongo from '../../lib/mongodb';
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Confirm from '../../components/maintenance/confirm';
 import UnitDisplay from '../../components/maintenance/unitDisplay';
@@ -8,7 +8,7 @@ import jobModel from '../../lib/schemas/maintenance/jobSchema';
 import unitModel from '../../lib/schemas/maintenance/unitSchema';
 import Title from '../../components/title';
 import LoadingSpinner from '../../components/maintenance/loadingSpinner';
-import MaintenanceSummary from '../../components/maintenance/summary';
+import Summary from '../../components/maintenance/summary';
 import NotificationComponent from '../../components/maintenance/notification';
 import { useUser } from '@auth0/nextjs-auth0';
 
@@ -68,17 +68,25 @@ const ActionButton = styled.button`
 export default function JobDetail({ job }) {
   const [showDeletePopUp, setShowDeletePopUp] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [showMaintenanceSummary, setShowMaintenanceSummary] = useState(false)
   const [notificationInfo, setNotificationInfo] = useState({show: false, message: ''})
+  const [hasMaintenanceAssigned, setHasMaintenanceAssigned] = useState(false);
   
   
   const router = useRouter()
   const {user, error, isloading} = useUser()
-  
+
   const toggleDeletePopUp = () => {
     showDeletePopUp ? setShowDeletePopUp(false) : setShowDeletePopUp(true)
   }
 
+  //check if job already has maintenance assigned so we know if the button to see it should be available
+  useEffect(() => {
+    if (job.currentMaintenance) {
+      setHasMaintenanceAssigned(true);
+    }
+  }, [job.currentMaintenance])
+
+  //navigate to adjust job page if the user is logged in and is a supervisor
   const adjustJob = () => {
     if (user?.role?.includes('admin') || user?.role?.includes('supervisor')) {
       router.push(`/maintenance/[job]/adjust`, `/maintenance/${job.jobNumber}/adjust`)
@@ -87,12 +95,12 @@ export default function JobDetail({ job }) {
     }
   }
   
+  //navigate to assigned maintenance page
   const seeAssignedMaintenance = () => {
-    
       router.push(`/maintenance/[job]/assignedMaintenance`, `/maintenance/${job.jobNumber}/assignedMaintenance`)
-    
   }
 
+  //checks if user is logged in and is a supervisor and deletes the job
   const deleteJob = async() => {
     if (user?.role?.includes('admin') || user?.role?.includes('supervisor')) {
       setIsLoading(true)
@@ -160,12 +168,12 @@ export default function JobDetail({ job }) {
         </UnitsContainer>
         <ButtonContainer>
           <ActionButton onClick={() => toggleDeletePopUp()}>Delete job</ActionButton>
-          {job.currentMaintenance && <ActionButton onClick={() => seeAssignedMaintenance()}>Assigned Maintenance</ActionButton>}
+          {hasMaintenanceAssigned && <ActionButton onClick={() => seeAssignedMaintenance()}>Assigned Maintenance</ActionButton>}
           <ActionButton onClick={() => adjustJob()}>Adjust job</ActionButton>
         </ButtonContainer>
-        {showDeletePopUp && <Confirm action={deleteJob} popUpToggle={toggleDeletePopUp}/>}
-        <LoadingSpinner isLoading={isLoading}/>
-        <MaintenanceSummary show={showMaintenanceSummary} job={job} user={user} />
+        {showDeletePopUp && <Confirm title={"Delete Confirmation"} description={"Are you sure you want to delete this Job?"} action={deleteJob} popUpToggle={toggleDeletePopUp}/>}
+        <LoadingSpinner isLoading={isLoading} />
+        <Summary job={job} user={user} setHasMaintenanceAssigned={setHasMaintenanceAssigned} hasMaintenanceAssigned={hasMaintenanceAssigned}/>
         <NotificationComponent
         show={notificationInfo.show}
         message={notificationInfo.message}

@@ -138,6 +138,7 @@ export default function Team() {
         if (response.ok) {
             const data = await response.json();
             setContacts(data.teamMembers);
+            event.target.reset()
         } else {
             console.error('Error:', response.status);
             // Handle error
@@ -206,14 +207,14 @@ export default function Team() {
             <SideContainer>
             <h2>Create New Contact</h2>
             <form onSubmit={addContactForUser}>
-              <label htmlFor="username">Username:</label>
+              <label htmlFor="username" required>Username:</label>
               <input type="text" id="username" />
 
-              <label htmlFor="email">Email:</label>
+              <label htmlFor="email" required>Email:</label>
               <input type="email" id="email" />
 
               <label htmlFor="role">Role:</label>
-              <select id="role">
+              <select id="role" required>
                 <option value="">Select a role</option>
                 <option value="operator">Operator</option>
                 <option value="supervisor">Supervisor</option>
