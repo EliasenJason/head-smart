@@ -5,7 +5,8 @@ import jobModel from "../lib/schemas/maintenance/jobSchema";
 import connectMongo from "../lib/mongodb";
 import { useRouter } from "next/router";
 import { useUser } from "@auth0/nextjs-auth0";
-
+import NotificationComponent from "../components/maintenance/notification";
+import { useState } from "react";
 
 const Container = styled.div`
   max-width: 800px;
@@ -52,11 +53,20 @@ const ActionButton = styled.button`
 `;
 
 export default function Maintenance({data}) {
+  const [notificationInfo, setNotificationInfo] = useState({show: false, message: ''})
   
   const router = useRouter()
+  const {user, error, isloading} = useUser()
 
   const navigateToJob = (jobNumber) => {
     router.push(`/maintenance/${jobNumber}`)
+  }
+  const createJob = () => {
+    if (user?.role?.includes('admin') || user?.role?.includes('supervisor')) {
+      router.push(`/maintenance/createjob`)
+    } else {
+      setNotificationInfo({show: true, message: 'You must be logged in as a supervisor to create a job'})
+    }
   }
   return (
     <Container>
@@ -68,7 +78,12 @@ export default function Maintenance({data}) {
               )
             })}
         </JobList>
-      <Link href="/maintenance/createjob"><ActionButton>Create New Job</ActionButton></Link>
+      <ActionButton onClick={() => createJob()}>Create New Job</ActionButton>
+      <NotificationComponent
+        show={notificationInfo.show}
+        message={notificationInfo.message}
+        onClose={() => setNotificationInfo({show: false, message: ""})}
+      />
     </Container>
   )
 }

@@ -167,9 +167,9 @@ export default function JobDetail({ job }) {
           </RightUnits>
         </UnitsContainer>
         <ButtonContainer>
-          <ActionButton onClick={() => toggleDeletePopUp()}>Delete job</ActionButton>
+          {user?.role?.includes('supervisor') && (<ActionButton onClick={() => toggleDeletePopUp()}>Delete job</ActionButton>)}
           {hasMaintenanceAssigned && <ActionButton onClick={() => seeAssignedMaintenance()}>Assigned Maintenance</ActionButton>}
-          <ActionButton onClick={() => adjustJob()}>Adjust job</ActionButton>
+          {user?.role?.includes('supervisor') && (<ActionButton onClick={() => adjustJob()}>Adjust job</ActionButton>)}
         </ButtonContainer>
         {showDeletePopUp && <Confirm title={"Delete Confirmation"} description={"Are you sure you want to delete this Job?"} action={deleteJob} popUpToggle={toggleDeletePopUp}/>}
         <LoadingSpinner isLoading={isLoading} />

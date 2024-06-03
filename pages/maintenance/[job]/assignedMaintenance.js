@@ -290,9 +290,10 @@ export default function AssignedMaintenance({maintenance}) {
           )}
         </UnitContainer>
       ))}
-      <PrintButton onClick={handlePrint}>Print Assigned Maintenance</PrintButton>
+      {user?.role?.includes('supervisor') && (<PrintButton onClick={handlePrint}>Print Assigned Maintenance</PrintButton>)}
       
-      <EmailContainer>
+      {user?.role?.includes('supervisor') && (
+        <EmailContainer>
         <h3>Select a supervisor and datavan operator if you would like to CC them in the email</h3>
         <SupervisorDropDown onChange={(event) => {
           if (event.target.value) {
@@ -326,6 +327,9 @@ export default function AssignedMaintenance({maintenance}) {
         </DatavanDropDown>
         <EmailButton onClick={handleEmail}>Email Assigned Maintenance</EmailButton>
       </EmailContainer>
+      )}
+      
+      
     </Container>
     )
 }

@@ -5,20 +5,27 @@ const TitleContainer = styled.div`
   background-color: #343a40;
   color: #fff;
   padding: 10px;
-  padding-bottom: 40px;
   width: 100%;
   position: relative;
+  min-height: 130px;
+
+  @media (max-width: 768px) {
+    padding: 20px;
+  }
 `;
 
 const TitleText = styled.h1`
   font-size: 22px;
   margin: 0;
   text-align: center;
-  padding: 8px;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
-const BackButton = styled.a`
-  background-color: #007BFF;
+const ButtonBase = styled.a`
+  background-color: #007bff;
   color: #fff;
   padding: 5px 10px;
   border: none;
@@ -33,66 +40,77 @@ const BackButton = styled.a`
   }
 `;
 
-const LoginButton = styled.a`
+const BackButton = styled(ButtonBase)`
   position: absolute;
   top: 10px;
-  right: 10px;
-  background-color: #007BFF;
-  color: #fff;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  font-size: 14px;
-  font-weight: 600;
-`
+  left: 10px;
 
-const LogoutButton = styled.a`
+  @media (max-width: 768px) {
+    margin-bottom: 10px;
+  }
+`;
+
+const LoginButton = styled(ButtonBase)`
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: #007BFF;
-  color: #fff;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  font-size: 14px;
-  font-weight: 600;
-`
-const Profile = styled.a`
+
+  @media (max-width: 768px) {
+    margin-bottom: 10px;
+  }
+`;
+
+const LogoutButton = styled(ButtonBase)`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+`;
+
+const Profile = styled(ButtonBase)`
   position: absolute;
   bottom: 10px;
   right: 10px;
-  background-color: #007BFF;
-  color: #fff;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  font-size: 14px;
-  font-weight: 600;
-`
+
+  @media (max-width: 768px) {
+    margin-top: 10px;
+  }
+`;
 
 const GreetingBox = styled.p`
   position: absolute;
-  bottom: auto;
   left: 10px;
-`
+  bottom: 10px;
+  margin: 0;
+
+  @media (max-width: 768px) {
+    margin-top: 10px;
+    top: 45px;
+    right: 70px;
+  }
+`;
 
 export default function Title({ backButtonHref, Text }) {
-  const {user, error, isloading} = useUser()
-  
+  const { user, error, isloading } = useUser();
+
   return (
     <TitleContainer>
       <BackButton href={backButtonHref}>Back</BackButton>
       <TitleText>{Text}</TitleText>
-      {user ? <GreetingBox>Welcome, {user.name}</GreetingBox> : <GreetingBox>Login to be able to modify/create jobs</GreetingBox>}
-      {user ? <LogoutButton href='/api/auth/logout'>Logout</LogoutButton> : <LoginButton href='/api/auth/login'>Login</LoginButton>}
-      {user?.role.includes('supervisor') && <Profile href="/maintenance/user/profile">My Profile</Profile>}
+      {user ? (
+        <GreetingBox>Welcome, {user.name}</GreetingBox>
+      ) : (
+        <GreetingBox>
+          Supervisors, login then contact Jason Eliasen for access.
+        </GreetingBox>
+      )}
+      {user ? (
+        <LogoutButton href="/api/auth/logout">Logout</LogoutButton>
+      ) : (
+        <LoginButton href="/api/auth/login">Login</LoginButton>
+      )}
+      {user?.role?.includes('supervisor') && (
+        <Profile href="/maintenance/user/profile">My Profile</Profile>
+      )}
     </TitleContainer>
   );
 }
