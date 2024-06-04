@@ -45,6 +45,7 @@ const IssueComponentNumber = styled.span`
 `;
 
 const UnitContainer = styled.div`
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   border: 2px solid #ccc;
@@ -75,8 +76,10 @@ const BackButton = styled.button`
 `;
 
 const PrintButton = styled.button`
-  margin: 10px;
-  background-color: #28a745;
+  width: 100%;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  background-color: #6c757d;
   color: #fff;
   padding: 10px 20px;
   border: none;
@@ -111,6 +114,29 @@ const EmailButton = styled.button`
   }
 `;
 
+const MarkAsCompleteButton = styled.button`
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  margin: 10px;
+  background-color: #28a745;
+  color: #fff;
+  padding: 12px 7px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 12px;
+  font-weight: 600;
+
+  &:hover {
+    background-color: #1f8333;
+  }
+  @media print {
+    display: none;
+  }
+`
+
 const EmailContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -142,14 +168,15 @@ const DatavanDropDown = styled.select`
   }
 `
 
-export default function AssignedMaintenance({maintenance}) {
+export default function AssignedMaintenance({maintenance, job}) {
   const { user, error, isLoading } = useUser()
   const [userContacts, setUserContacts] = useState([])
   const [supervisor, setSupervisorEmail] = useState('')
   const [datavan, setDatavanEmail] = useState('')
+  const [updatedMaintenance, setUpdatedMaintenance] = useState(maintenance);
 
   const router = useRouter()
-
+  
   useEffect(() => {
     const getContacts = async () => {
         try {
@@ -241,23 +268,72 @@ export default function AssignedMaintenance({maintenance}) {
           </button>
         </div>
       );
-      // Render the email form in a modal or a new page
     }
   };
-  //get assigned maintenance from database
-  //display assigned maintenance
   //add button to unassign maintenance
+  const markAsComplete = async (unitNumber) => {
+    const componentUpdates = Object.entries(maintenance[unitNumber]).reduce((acc, [component, data]) => {
+      if (component !== 'fixer') {
+        const componentNumbers = data.numbers;
+        const componentStatuses = data.status;
+
+        componentNumbers.forEach((number, index) => {
+          acc.push({
+            component: `${component}.${number}`,
+            componentNumber: Number(number),
+          });
+        });
+      }
+      return acc;
+    }, []);
+
+    const filter = { number: unitNumber };
+    const update = {
+      $set: {},
+    };
+
+    componentUpdates.forEach(({ component, componentNumber }) => {
+      update.$set[`${component}.status`] = 'green';
+    });
+
+    const options = {
+      new: true,
+      runValidators: true,
+    };
+    const response = await fetch('/api/maintenance/resetUnitMaintenance', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ unit: unitNumber, update, job }),
+    });
+    if (response.ok) {
+      console.log(response.status);
+      const data = await response.json();
+      console.log(data);
+
+      // Remove the unit number from the updatedMaintenance state
+      const newMaintenance = { ...updatedMaintenance };
+      delete newMaintenance[unitNumber];
+      setUpdatedMaintenance(newMaintenance);
+    } else {
+      console.error('Error marking unit as complete:', response.status);
+    }
+  }
   //add button to mark as complete
     return (
       <Container>
       <BackButton onClick={handleGoBack}>Go Back</BackButton>
       <h2>Assigned Maintenance</h2>
-      {Object.entries(maintenance).map(([unitNumber, componentTypes]) => (
+      {Object.entries(updatedMaintenance).map(([unitNumber, componentTypes]) => (
         <UnitContainer key={unitNumber}>
           <IssueUnitWithFixer>
             <IssueUnit>{unitNumber}</IssueUnit>
             {componentTypes.fixer && (
               <FixerName>Assigned to: {componentTypes.fixer.name}</FixerName>
+            )}
+            {user?.role?.includes('supervisor') && (
+            <MarkAsCompleteButton onClick={() => markAsComplete(unitNumber)}>Mark as Complete</MarkAsCompleteButton>
             )}
           </IssueUnitWithFixer>
 
@@ -290,10 +366,12 @@ export default function AssignedMaintenance({maintenance}) {
           )}
         </UnitContainer>
       ))}
-      {user?.role?.includes('supervisor') && (<PrintButton onClick={handlePrint}>Print Assigned Maintenance</PrintButton>)}
+      {user?.role?.includes('supervisor') && (
+      <PrintButton onClick={handlePrint}>Print Assigned Maintenance</PrintButton>
+      )}
       
       {user?.role?.includes('supervisor') && (
-        <EmailContainer>
+      <EmailContainer>
         <h3>Select a supervisor and datavan operator if you would like to CC them in the email</h3>
         <SupervisorDropDown onChange={(event) => {
           if (event.target.value) {
@@ -354,7 +432,8 @@ export async function getServerSideProps(context) {
   }
   return {
     props: {
-      maintenance: JSON.parse(JSON.stringify(maintenance))
+      maintenance: JSON.parse(JSON.stringify(maintenance)),
+      job: JSON.parse(JSON.stringify(job.jobNumber)),
     },
   };
 }
