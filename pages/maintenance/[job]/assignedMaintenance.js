@@ -190,7 +190,6 @@ export default function AssignedMaintenance({maintenance, job}) {
             if (response.ok) {
                 console.log('Contacts fetched successfully');
                 const data = await response.json();
-                console.log(data)
                 setUserContacts(data.teamMembers);
             } else {
                 console.error('Error:', response.status);
@@ -415,7 +414,7 @@ export default function AssignedMaintenance({maintenance, job}) {
 export async function getServerSideProps(context) {
   const number = context.params.job;
   const query = {jobNumber: number}
-  console.log(query)
+  //console.log(query)
   let job
   let maintenance
   // Make an API request to fetch job data based on the job number
