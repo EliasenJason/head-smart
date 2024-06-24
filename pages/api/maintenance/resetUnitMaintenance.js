@@ -22,8 +22,19 @@ export default async function resetUnitMaintenance(req, res) {
     };
     //UPDATE UNITS COLLECTION
     //reset the unit statuses
-    const updatedUnit = await unitModel.findOneAndUpdate(filter, update, options);
-    console.log("Updated unit:", updatedUnit);
+    console.log("WTF")
+    if (req.body.remove) {
+      console.log('****************')
+      const updatedUnit = await unitModel.findOneAndUpdate(filter, update, options);
+      console.log("Updated unit:", updatedUnit);
+      console.log('reset components')
+    } else {
+      console.log('****************')
+      console.log('do not reset components')
+    }
+
+    
+    
     
     //Remove the unit from the job's currentMaintenance object
     const jobUpdate = {

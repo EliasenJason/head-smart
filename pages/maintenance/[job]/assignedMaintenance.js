@@ -295,8 +295,7 @@ export default function AssignedMaintenance({maintenance, job}) {
   };
   //add button to unassign maintenance
   const markAsComplete = async (unitNumber, fixer, remove) => {
-    console.log(remove)
-    const componentUpdates = Object.entries(maintenance[unitNumber]).reduce((acc, [component, data]) => {
+        const componentUpdates = Object.entries(maintenance[unitNumber]).reduce((acc, [component, data]) => {
       if (component !== 'fixer') {
         const componentNumbers = data.numbers;
         const componentStatuses = data.status;
