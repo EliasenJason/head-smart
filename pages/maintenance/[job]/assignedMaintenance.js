@@ -15,7 +15,7 @@ const IssueUnit = styled.span`
   color: #007BFF;
   font-weight: bold;
   font-size: 21px;
-  flex: 1 1 40%;
+  flex: 1 1 20%;
   margin-bottom: .5em;
 `;
 
@@ -28,12 +28,56 @@ const IssueUnitWithFixer = styled.div`
 
 const FixerName = styled.span`
   color: #6c757d;
-  font-size: 16px;
+  font-size: 10px;
   font-weight: normal;
+  margin-left: 10px;
 `;
 
+const MarkAsCompleteButton = styled.button`
+  margin: 10px;
+  background-color: #28a745;
+  color: #fff;
+  padding: 12px 7px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 12px;
+  font-weight: 600;
+
+  &:hover {
+    background-color: #1f8333;
+  }
+  @media print {
+    display: none;
+  }
+`
+const MarkAsInCompleteButton = styled.button`
+  margin: 10px;
+  background-color: red;
+  color: #fff;
+  padding: 12px 7px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 12px;
+  font-weight: 600;
+
+  &:hover {
+    background-color: darkred;
+  }
+  @media print {
+    display: none;
+  }
+`
+const IssuesContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: .3em;
+`
+
 const Issues = styled.div`
-  flex: 1 1 100%;
 `;
 
 const IssueComponentType = styled.span`
@@ -53,6 +97,7 @@ const UnitContainer = styled.div`
   margin-bottom: 20px;
   padding: 10px;
   background: #f9f9f9;
+  min-height: 10px;
 `;
 
 const BackButton = styled.button`
@@ -114,28 +159,7 @@ const EmailButton = styled.button`
   }
 `;
 
-const MarkAsCompleteButton = styled.button`
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
-  margin: 10px;
-  background-color: #28a745;
-  color: #fff;
-  padding: 12px 7px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  font-size: 12px;
-  font-weight: 600;
 
-  &:hover {
-    background-color: #1f8333;
-  }
-  @media print {
-    display: none;
-  }
-`
 
 const EmailContainer = styled.div`
   display: flex;
@@ -174,7 +198,7 @@ export default function AssignedMaintenance({maintenance, job}) {
   const [supervisor, setSupervisorEmail] = useState('')
   const [datavan, setDatavanEmail] = useState('')
   const [updatedMaintenance, setUpdatedMaintenance] = useState(maintenance);
-
+  console.log(updatedMaintenance)
   const router = useRouter()
   
   useEffect(() => {
@@ -270,7 +294,8 @@ export default function AssignedMaintenance({maintenance, job}) {
     }
   };
   //add button to unassign maintenance
-  const markAsComplete = async (unitNumber) => {
+  const markAsComplete = async (unitNumber, fixer, remove) => {
+    console.log(remove)
     const componentUpdates = Object.entries(maintenance[unitNumber]).reduce((acc, [component, data]) => {
       if (component !== 'fixer') {
         const componentNumbers = data.numbers;
@@ -304,7 +329,7 @@ export default function AssignedMaintenance({maintenance, job}) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ unit: unitNumber, update, job }),
+      body: JSON.stringify({ unit: unitNumber, update, job, fixer, remove }),
     });
     if (response.ok) {
       console.log(response.status);
@@ -319,23 +344,27 @@ export default function AssignedMaintenance({maintenance, job}) {
       console.error('Error marking unit as complete:', response.status);
     }
   }
-  //add button to mark as complete
+  
     return (
       <Container>
       <BackButton onClick={handleGoBack}>Go Back</BackButton>
       <h2>Assigned Maintenance</h2>
       {Object.entries(updatedMaintenance).map(([unitNumber, componentTypes]) => (
         <UnitContainer key={unitNumber}>
-          <IssueUnitWithFixer>
-            <IssueUnit>{unitNumber}</IssueUnit>
-            {componentTypes.fixer && (
+          {componentTypes.fixer && (
               <FixerName>Assigned to: {componentTypes.fixer.name}</FixerName>
             )}
+          <IssueUnitWithFixer>
+            <IssueUnit>{unitNumber}</IssueUnit>
+            
             {user?.role?.includes('supervisor') && (
-            <MarkAsCompleteButton onClick={() => markAsComplete(unitNumber)}>Mark as Complete</MarkAsCompleteButton>
+            <MarkAsCompleteButton onClick={() => markAsComplete(unitNumber, componentTypes.fixer.name, true)}>Completed</MarkAsCompleteButton>
+            )}
+            {user?.role?.includes('supervisor') && (
+            <MarkAsInCompleteButton onClick={() => markAsComplete(unitNumber, componentTypes.fixer.name, false)}>Remove</MarkAsInCompleteButton>
             )}
           </IssueUnitWithFixer>
-
+          <IssuesContainer>
           {Object.entries(componentTypes).map(
             ([componentTypeKey, { numbers, status }]) =>
               componentTypeKey !== 'fixer' && (
@@ -363,6 +392,7 @@ export default function AssignedMaintenance({maintenance, job}) {
                 </Issues>
               )
           )}
+          </IssuesContainer>
         </UnitContainer>
       ))}
       {user?.role?.includes('supervisor') && (

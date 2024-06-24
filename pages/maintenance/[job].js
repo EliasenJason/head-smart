@@ -100,6 +100,10 @@ export default function JobDetail({ job }) {
       router.push(`/maintenance/[job]/assignedMaintenance`, `/maintenance/${job.jobNumber}/assignedMaintenance`)
   }
 
+  const seeHistory = () => {
+    router.push(`/maintenance/[job]/history`, `/maintenance/${job.jobNumber}/history`)
+  }
+
   //checks if user is logged in and is a supervisor and deletes the job
   const deleteJob = async() => {
     if (user?.role?.includes('admin') || user?.role?.includes('supervisor')) {
@@ -171,6 +175,7 @@ export default function JobDetail({ job }) {
           {hasMaintenanceAssigned && <ActionButton onClick={() => seeAssignedMaintenance()}>Assigned Maintenance</ActionButton>}
           {user?.role?.includes('supervisor') && (<ActionButton onClick={() => adjustJob()}>Adjust job</ActionButton>)}
         </ButtonContainer>
+        <ActionButton onClick={() => seeHistory()}>Maintenance History</ActionButton>
         {showDeletePopUp && <Confirm title={"Delete Confirmation"} description={"Are you sure you want to delete this Job?"} action={deleteJob} popUpToggle={toggleDeletePopUp}/>}
         <LoadingSpinner isLoading={isLoading} />
         <Summary job={job} user={user} setHasMaintenanceAssigned={setHasMaintenanceAssigned} hasMaintenanceAssigned={hasMaintenanceAssigned}/>
