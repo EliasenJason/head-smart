@@ -89,7 +89,7 @@ const formatComponentName = (word) => {
 export default function History({ completedMaintenance, jobNumber }) {
   const { user, error, isLoading } = useUser()
   const [completedMaintenanceState, setCompletedMaintenanceState] = useState(completedMaintenance);
-  console.log(completedMaintenanceState)
+  //console.log(completedMaintenanceState)
   
   
   
@@ -117,9 +117,28 @@ export default function History({ completedMaintenance, jobNumber }) {
   const componentCounts = {};
   // Count the occurrences of each component
   completedMaintenanceState.forEach((item) => {
+    
     item.maintenanceCompleted.forEach((maintenance) => {
-      const { component } = maintenance;
+      
+      let { component } = maintenance;
+      console.log(component)
+      if (component === 'suctionSeat' || component === 'dischargeSeat') {
+        component = 'seats';
+      }
+      if (component === 'suctionValve' || component === 'dischargeValve') {
+        component = 'valves';
+      }
+      if (component === 'plunger') {
+        component = 'plungers'
+      }
+      if (component.includes('Seal')) {
+        component = component + 's'
+      }
+      if (component === 'stuffingBox') {
+        component = 'stuffing boxes'
+      }
       componentCounts[component] = (componentCounts[component] || 0) + 1;
+      console.log(componentCounts)
     });
   });
 
