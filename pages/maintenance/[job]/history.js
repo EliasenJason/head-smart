@@ -1,6 +1,6 @@
 import jobHistoryModel from "../../../lib/schemas/maintenance/jobHistorySchema";
 import connectMongo from "../../../lib/mongodb";
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import styled from "styled-components"
 import { useUser } from '@auth0/nextjs-auth0'
 
@@ -22,39 +22,10 @@ const BackButton = styled.button`
   }
 `;
 
-const HistoryContainer = styled.div`
-  margin: 20px;
-  padding: 20px;
-  border: 2px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-`;
-
 const HistoryTitle = styled.h1`
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
-`;
-
-const FixerInfo = styled.p`
-  font-size: 16px;
-  margin-bottom: 10px;
-`;
-
-const MaintenanceTitle = styled.h2`
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 10px;
-`;
-
-const MaintenanceList = styled.ul`
-  list-style-type: none;
-  padding: 0;
-`;
-
-const MaintenanceItem = styled.li`
-  font-size: 16px;
-  margin-bottom: 5px;
 `;
 
 const TotalCountContainer = styled.div`
@@ -77,6 +48,44 @@ const TotalCountItem = styled.li`
   margin-bottom: 5px;
 `;
 
+const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+`;
+
+const TableHead = styled.thead`
+  background-color: #f2f2f2;
+`;
+
+const TableRow = styled.tr`
+  border-bottom: 2px solid black;
+`;
+
+const TableHeader = styled.th`
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+`;
+
+const TableBody = styled.tbody``;
+
+const TableData = styled.td`
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  &.center {
+    text-align: center;
+  }
+`;
+
+const DeleteButton = styled.button`
+  background-color: #ff4d4d;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+`;
+
 const formatComponentName = (word) => {
   // split the word before the capital letter if there is one
   const splitWord = word.replace(/([A-Z])/g, ' $1');
@@ -89,7 +98,7 @@ const formatComponentName = (word) => {
 export default function History({ completedMaintenance, jobNumber }) {
   const { user, error, isLoading } = useUser()
   const [completedMaintenanceState, setCompletedMaintenanceState] = useState(completedMaintenance);
-  //console.log(completedMaintenanceState)
+  console.log(completedMaintenanceState)
   
   
   
@@ -104,12 +113,12 @@ export default function History({ completedMaintenance, jobNumber }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log('Success:', data);
+        //console.log('Success:', data);
         //remove the item from the state
         setCompletedMaintenanceState(completedMaintenanceState.filter((item) => item._id !== id));
       })
       .catch((error) => {
-        console.error('Error:', error);
+        //console.error('Error:', error);
       });
 
   }
@@ -119,9 +128,9 @@ export default function History({ completedMaintenance, jobNumber }) {
   completedMaintenanceState.forEach((item) => {
     
     item.maintenanceCompleted.forEach((maintenance) => {
-      
+
       let { component } = maintenance;
-      console.log(component)
+      // console.log(component)
       if (component === 'suctionSeat' || component === 'dischargeSeat') {
         component = 'seats';
       }
@@ -138,35 +147,13 @@ export default function History({ completedMaintenance, jobNumber }) {
         component = 'stuffing boxes'
       }
       componentCounts[component] = (componentCounts[component] || 0) + 1;
-      console.log(componentCounts)
+      // console.log(componentCounts)
     });
   });
 
   return (
     <>
       <BackButton onClick={() => window.history.back()}>Back</BackButton>
-      <HistoryTitle>Maintenance History</HistoryTitle>
-      {completedMaintenanceState.map((item) => (
-        <HistoryContainer key={item._id}>
-          {user?.role?.includes('supervisor') && (
-          <button onClick={() => deleteMaintenance(item._id)}>delete this record</button>
-          )}
-          <FixerInfo>
-            <p>Unit: {item.unit}</p>
-            Fixer: {item.fixer}
-            <br />
-            {new Date(item.timestamp).toLocaleString()}
-          </FixerInfo>
-          <MaintenanceTitle>Maintenance Completed</MaintenanceTitle>
-          <MaintenanceList>
-            {item.maintenanceCompleted.map((maintenance) => (
-              <MaintenanceItem key={maintenance._id}>
-                {formatComponentName(maintenance.component)} {maintenance.hole}
-              </MaintenanceItem>
-            ))}
-          </MaintenanceList>
-        </HistoryContainer>
-      ))}
       <TotalCountContainer>
         <TotalCountTitle>Total used Components</TotalCountTitle>
         <TotalCountList>
@@ -177,6 +164,53 @@ export default function History({ completedMaintenance, jobNumber }) {
           ))}
         </TotalCountList>
       </TotalCountContainer>
+      <HistoryTitle>Maintenance History</HistoryTitle>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableHeader>Unit</TableHeader>
+            <TableHeader>Fixer</TableHeader>
+            <TableHeader>Date</TableHeader>
+            <TableHeader>Component</TableHeader>
+            <TableHeader>Hole</TableHeader>
+            <TableHeader>Action</TableHeader>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {completedMaintenanceState.map((item) => (
+            <Fragment key={item._id}>
+              <TableRow>
+                <TableData rowSpan={item.maintenanceCompleted.length}>
+                  {item.unit}
+                </TableData>
+                <TableData rowSpan={item.maintenanceCompleted.length}>
+                  {item.fixer}
+                </TableData>
+                <TableData rowSpan={item.maintenanceCompleted.length}>
+                  {new Date(item.timestamp).toLocaleString()}
+                </TableData>
+                <TableData>{formatComponentName(item.maintenanceCompleted[0].component)}</TableData>
+                <TableData>{item.maintenanceCompleted[0].hole}</TableData>
+                <TableData className="center" rowSpan={item.maintenanceCompleted.length}>
+                  {user?.role?.includes("supervisor") && (
+                    <DeleteButton onClick={() => deleteMaintenance(item._id)}>
+                      Delete
+                    </DeleteButton>
+                  )}
+                </TableData>
+              </TableRow>
+              {item.maintenanceCompleted.length > 1 &&
+                item.maintenanceCompleted.slice(1).map((maintenance, index) => (
+                  <TableRow key={maintenance._id}>
+                    <TableData>{formatComponentName(maintenance.component)}</TableData>
+                    <TableData>{maintenance.hole}</TableData>
+                  </TableRow>
+                ))}
+            </Fragment>
+          ))}
+        </TableBody>
+      </Table>
+      
     </>
   );
 }

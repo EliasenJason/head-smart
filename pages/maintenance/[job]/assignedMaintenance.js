@@ -4,6 +4,7 @@ import jobModel from "../../../lib/schemas/maintenance/jobSchema"
 import styled from 'styled-components'
 import { useRouter } from "next/router";
 import { useUser } from '@auth0/nextjs-auth0'
+import AddComponentPopUp from '../../../components/maintenance/addComponentPopUp'
 
 const Container = styled.div`
   max-width: 800px;
@@ -66,6 +67,26 @@ const MarkAsInCompleteButton = styled.button`
 
   &:hover {
     background-color: darkred;
+  }
+  @media print {
+    display: none;
+  }
+`
+
+const AddComponentButton = styled.button`
+  margin: 10px;
+  background-color: #007BFF;
+  color: #fff;
+  padding: 12px 7px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 12px;
+  font-weight: 600;
+
+  &:hover {
+    background-color: #0056b3;
   }
   @media print {
     display: none;
@@ -198,7 +219,8 @@ export default function AssignedMaintenance({maintenance, job}) {
   const [supervisor, setSupervisorEmail] = useState('')
   const [datavan, setDatavanEmail] = useState('')
   const [updatedMaintenance, setUpdatedMaintenance] = useState(maintenance);
-  console.log(updatedMaintenance)
+  const [showAddComponentPopUp, setShowAddComponentPopUp] = useState(false);
+
   const router = useRouter()
   
   useEffect(() => {
@@ -293,7 +315,7 @@ export default function AssignedMaintenance({maintenance, job}) {
       );
     }
   };
-  //add button to unassign maintenance
+
   const markAsComplete = async (unitNumber, fixer, remove) => {
         const componentUpdates = Object.entries(maintenance[unitNumber]).reduce((acc, [component, data]) => {
       if (component !== 'fixer') {
@@ -343,6 +365,9 @@ export default function AssignedMaintenance({maintenance, job}) {
       console.error('Error marking unit as complete:', response.status);
     }
   }
+  const toggleAddComponentPopUp = () => {
+    showAddComponentPopUp ? setShowAddComponentPopUp(false) : setShowAddComponentPopUp(true)
+  }
   
     return (
       <Container>
@@ -351,11 +376,15 @@ export default function AssignedMaintenance({maintenance, job}) {
       {Object.entries(updatedMaintenance).map(([unitNumber, componentTypes]) => (
         <UnitContainer key={unitNumber}>
           {componentTypes.fixer && (
-              <FixerName>Assigned to: {componentTypes.fixer.name}</FixerName>
+              <FixerName>
+                Assigned to: {componentTypes.fixer.name}</FixerName>
             )}
           <IssueUnitWithFixer>
             <IssueUnit>{unitNumber}</IssueUnit>
-            
+            {user?.role?.includes('supervisor') && (
+            <AddComponentButton onClick={() => toggleAddComponentPopUp()}>Add Component</AddComponentButton>
+            )}
+            {showAddComponentPopUp && <AddComponentPopUp toggle={toggleAddComponentPopUp} maintenance={updatedMaintenance} setMaintenance={setUpdatedMaintenance} unit={unitNumber}/>}
             {user?.role?.includes('supervisor') && (
             <MarkAsCompleteButton onClick={() => markAsComplete(unitNumber, componentTypes.fixer.name, true)}>Completed</MarkAsCompleteButton>
             )}
