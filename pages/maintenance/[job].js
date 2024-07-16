@@ -172,10 +172,14 @@ export default function JobDetail({ job }) {
         </UnitsContainer>
         <ButtonContainer>
           {user?.role?.includes('supervisor') && (<ActionButton onClick={() => toggleDeletePopUp()}>Delete job</ActionButton>)}
-          {hasMaintenanceAssigned && <ActionButton onClick={() => seeAssignedMaintenance()}>Assigned Maintenance</ActionButton>}
+          
           {user?.role?.includes('supervisor') && (<ActionButton onClick={() => adjustJob()}>Adjust job</ActionButton>)}
         </ButtonContainer>
-        <ActionButton onClick={() => seeHistory()}>Maintenance History</ActionButton>
+        <ButtonContainer>
+          <ActionButton onClick={() => seeHistory()}>Maintenance History</ActionButton>
+          {hasMaintenanceAssigned && <ActionButton onClick={() => seeAssignedMaintenance()}>Assigned Maintenance</ActionButton>}
+        </ButtonContainer>
+        
         {showDeletePopUp && <Confirm title={"Delete Confirmation"} description={"Are you sure you want to delete this Job?"} action={deleteJob} popUpToggle={toggleDeletePopUp}/>}
         <LoadingSpinner isLoading={isLoading} />
         <Summary job={job} user={user} setHasMaintenanceAssigned={setHasMaintenanceAssigned} hasMaintenanceAssigned={hasMaintenanceAssigned}/>

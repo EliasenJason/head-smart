@@ -1,8 +1,10 @@
 import jobHistoryModel from "../../../lib/schemas/maintenance/jobHistorySchema";
 import connectMongo from "../../../lib/mongodb";
-import { useState, Fragment } from "react";
+import { useState, Fragment, useEffect } from "react";
 import styled from "styled-components"
+import { useRouter } from "next/router";
 import { useUser } from '@auth0/nextjs-auth0'
+import formatComponentName from "../../../lib/formatComponentName";
 
 
 const BackButton = styled.button`
@@ -86,21 +88,20 @@ const DeleteButton = styled.button`
   cursor: pointer;
 `;
 
-const formatComponentName = (word) => {
-  // split the word before the capital letter if there is one
-  const splitWord = word.replace(/([A-Z])/g, ' $1');
-  // capitalize the first letter of each word
-  return splitWord.charAt(0).toUpperCase() + splitWord.slice(1);
-};
-
-
 
 export default function History({ completedMaintenance, jobNumber }) {
   const { user, error, isLoading } = useUser()
   const [completedMaintenanceState, setCompletedMaintenanceState] = useState(completedMaintenance);
-  console.log(completedMaintenanceState)
   
-  
+  const router = useRouter()
+ 
+  const handleGoBack = () => {
+    // Get the previous page's path
+    const previousPath = router.asPath.split('/').slice(0, -1).join('/');
+
+    // Navigate to the previous page, forcing a re-run of getServerSideProps
+    router.push(previousPath, previousPath, { scroll: false });
+  };
   
   const deleteMaintenance = (id) => {
     //use fetch to call api route removeCompletedMaintenance.js by sending the id and the jobNumber
@@ -153,7 +154,7 @@ export default function History({ completedMaintenance, jobNumber }) {
 
   return (
     <>
-      <BackButton onClick={() => window.history.back()}>Back</BackButton>
+      <BackButton onClick={() => handleGoBack()}>Back</BackButton>
       <TotalCountContainer>
         <TotalCountTitle>Total used Components</TotalCountTitle>
         <TotalCountList>
@@ -164,7 +165,6 @@ export default function History({ completedMaintenance, jobNumber }) {
           ))}
         </TotalCountList>
       </TotalCountContainer>
-      <HistoryTitle>Maintenance History</HistoryTitle>
       <Table>
         <TableHead>
           <TableRow>
@@ -210,7 +210,6 @@ export default function History({ completedMaintenance, jobNumber }) {
           ))}
         </TableBody>
       </Table>
-      
     </>
   );
 }
@@ -220,8 +219,7 @@ export default function History({ completedMaintenance, jobNumber }) {
 export async function getServerSideProps(context) {
   const number = context.params.job;
   const query = {jobNumber: number}
-  console.log('******')
-  console.log(query)
+
   let job
   let completedMaintenance
   // Make an API request to fetch job data based on the job number

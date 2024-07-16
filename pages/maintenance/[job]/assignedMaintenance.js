@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { useRouter } from "next/router";
 import { useUser } from '@auth0/nextjs-auth0'
 import AddComponentPopUp from '../../../components/maintenance/addComponentPopUp'
+import formatComponentName from "../../../lib/formatComponentName"
 
 const Container = styled.div`
   max-width: 800px;
@@ -381,9 +382,7 @@ export default function AssignedMaintenance({maintenance, job}) {
             )}
           <IssueUnitWithFixer>
             <IssueUnit>{unitNumber}</IssueUnit>
-            {user?.role?.includes('supervisor') && (
-            <AddComponentButton onClick={() => toggleAddComponentPopUp()}>Add Component</AddComponentButton>
-            )}
+            
             {showAddComponentPopUp && <AddComponentPopUp toggle={toggleAddComponentPopUp} maintenance={updatedMaintenance} setMaintenance={setUpdatedMaintenance} unit={unitNumber}/>}
             {user?.role?.includes('supervisor') && (
             <MarkAsCompleteButton onClick={() => markAsComplete(unitNumber, componentTypes.fixer.name, true)}>Completed</MarkAsCompleteButton>
@@ -398,8 +397,7 @@ export default function AssignedMaintenance({maintenance, job}) {
               componentTypeKey !== 'fixer' && (
                 <Issues key={componentTypeKey}>
                   <IssueComponentType>
-                    {componentTypeKey.charAt(0).toUpperCase() +
-                      componentTypeKey.slice(1)}
+                    {formatComponentName(componentTypeKey)}
                     :
                   </IssueComponentType>{' '}
                   {numbers.map((number, index) => (
@@ -420,6 +418,9 @@ export default function AssignedMaintenance({maintenance, job}) {
                 </Issues>
               )
           )}
+          {user?.role?.includes('supervisor') && (
+            <AddComponentButton onClick={() => toggleAddComponentPopUp()}>Add Component</AddComponentButton>
+            )}
           </IssuesContainer>
         </UnitContainer>
       ))}
