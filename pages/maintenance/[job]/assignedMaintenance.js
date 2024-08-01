@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { useUser } from '@auth0/nextjs-auth0'
 import AddComponentPopUp from '../../../components/maintenance/addComponentPopUp'
 import formatComponentName from "../../../lib/formatComponentName"
+import { set } from "mongoose";
 
 const Container = styled.div`
   max-width: 800px;
@@ -221,6 +222,7 @@ export default function AssignedMaintenance({maintenance, job}) {
   const [datavan, setDatavanEmail] = useState('')
   const [updatedMaintenance, setUpdatedMaintenance] = useState(maintenance);
   const [showAddComponentPopUp, setShowAddComponentPopUp] = useState(false);
+  const [selectedUnit, setSelectedUnit] = useState('');
 
   const router = useRouter()
   
@@ -366,7 +368,8 @@ export default function AssignedMaintenance({maintenance, job}) {
       console.error('Error marking unit as complete:', response.status);
     }
   }
-  const toggleAddComponentPopUp = () => {
+  const toggleAddComponentPopUp = (unitNumber) => {
+    setSelectedUnit(unitNumber)
     showAddComponentPopUp ? setShowAddComponentPopUp(false) : setShowAddComponentPopUp(true)
   }
   
@@ -383,7 +386,7 @@ export default function AssignedMaintenance({maintenance, job}) {
           <IssueUnitWithFixer>
             <IssueUnit>{unitNumber}</IssueUnit>
             
-            {showAddComponentPopUp && <AddComponentPopUp toggle={toggleAddComponentPopUp} maintenance={updatedMaintenance} setMaintenance={setUpdatedMaintenance} unit={unitNumber}/>}
+            {showAddComponentPopUp && <AddComponentPopUp toggle={toggleAddComponentPopUp} maintenance={updatedMaintenance} setMaintenance={setUpdatedMaintenance} unit={selectedUnit}/>}
             {user?.role?.includes('supervisor') && (
             <MarkAsCompleteButton onClick={() => markAsComplete(unitNumber, componentTypes.fixer.name, true)}>Completed</MarkAsCompleteButton>
             )}
@@ -419,7 +422,7 @@ export default function AssignedMaintenance({maintenance, job}) {
               )
           )}
           {user?.role?.includes('supervisor') && (
-            <AddComponentButton onClick={() => toggleAddComponentPopUp()}>Add Component</AddComponentButton>
+            <AddComponentButton onClick={() => toggleAddComponentPopUp(unitNumber)}>Add Component</AddComponentButton>
             )}
           </IssuesContainer>
         </UnitContainer>

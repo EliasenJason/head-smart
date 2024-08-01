@@ -23,6 +23,8 @@ const PopUpContent = styled.div`
 export default function AddComponents({toggle, maintenance, setMaintenance, unit}) {
   const [addedComponents, setAddedComponents] = useState([])
 
+  console.log('this is the unit prop:')
+  console.log(unit)
   const components = [
     "dischargeValve",
     "suctionValve",
