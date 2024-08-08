@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { useUser } from '@auth0/nextjs-auth0'
 import AddComponentPopUp from '../../../components/maintenance/addComponentPopUp'
 import formatComponentName from "../../../lib/formatComponentName"
-import { set } from "mongoose";
 
 const Container = styled.div`
   max-width: 800px;
