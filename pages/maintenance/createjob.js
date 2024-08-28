@@ -89,15 +89,25 @@ const InputLabel = styled.label`
 
 export default function CreateJob() {
   const [jobNumber, setJobNumber] = useState(null)
+  const [jobNumberError, setJobNumberError] = useState('');
   const [leftInputValues, setLeftInputValues] = useState([''])
   const [rightInputValues, setRightInputValues] = useState([''])
   const [isDataSubmitted, setIsDataSubmitted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
   const router = useRouter()
+
+  const jobNumberPattern = /^(FR)-\d{7}$/i;
+
   const handleJobNumberChange = (event) => {
-    setJobNumber(event.target.value)
-  }
+    setJobNumber(event.target.value);
+    const inputValue = event.target.value.toUpperCase();
+    if (jobNumberPattern.test(inputValue)) {
+      setJobNumberError('');
+    } else {
+      setJobNumberError('Invalid Job Number format. Please enter in the format "FR-" followed by a 7-digit number.');
+    }
+  };
 
   const handleLeftInputChange = (index, value) => {
     const newLeftInputValues = [...leftInputValues];
@@ -136,64 +146,68 @@ export default function CreateJob() {
   }
 
   const createJob = async () => {
+    if (!jobNumberPattern.test(jobNumber)) {
+      //check if the jobnumber is valid, escape the function if it is not
+      return;
+    }
   //TODO setup checks to see if the same unit is used multiple times and display error
-  setIsLoading(true)
-  //add units that aren't already in the database, will fail if its a duplicate
-  let units = [...new Set([...leftInputValues,...rightInputValues])]
-  units.forEach((unitNumber, index) => units[index] = createEmptyUnit(unitNumber))
-  console.log('creating any new units')
-  try {
-    const res = await fetch('/api/maintenance/createUnits', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(units)
-    })
-    if (res.ok) {
-      console.log('units created')
-    } else {
-      console.error('Error in creating Units:', res.statusText)
-    }
-  } catch (error) {
-    console.error('Error creating units:', error)
-  }
-  //2. create the job with the references to the units
-  console.log('creating job')
-  let arrayOfLeftUnitObjects = leftInputValues.map((item) => {
-    return {unit: item}
-  })
-  let arrayOfRightUnitObjects = rightInputValues.map((item) => {
-    return {unit: item}
-  })
-  if (arrayOfLeftUnitObjects.length === 1 && arrayOfLeftUnitObjects[0].unit === '') {
-    arrayOfLeftUnitObjects = []
-  }
-  if (arrayOfRightUnitObjects.length === 1 && arrayOfRightUnitObjects[0].unit === '') {
-    arrayOfRightUnitObjects = []
-  }
-  try {
-    const res = await fetch('/api/maintenance/createJob', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        jobNumber: jobNumber,
-        unitsOnLeft: arrayOfLeftUnitObjects,
-        unitsOnRight: arrayOfRightUnitObjects
+    setIsLoading(true)
+    //add units that aren't already in the database, will fail if its a duplicate
+    let units = [...new Set([...leftInputValues,...rightInputValues])]
+    units.forEach((unitNumber, index) => units[index] = createEmptyUnit(unitNumber))
+    console.log('creating any new units')
+    try {
+      const res = await fetch('/api/maintenance/createUnits', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(units)
       })
-    })
-    if (res.ok) {
-      console.log('job created')
-      router.push(`/maintenance/`)
-    } else {
-      console.error('Error in creating job:', res.statusText)
-    }
+      if (res.ok) {
+        console.log('units created')
+      } else {
+        console.error('Error in creating Units:', res.statusText)
+      }
     } catch (error) {
-      console.error('Error creating job:', error)
-  }
-  setIsLoading(false)
+      console.error('Error creating units:', error)
+    }
+    //2. create the job with the references to the units
+    console.log('creating job')
+    let arrayOfLeftUnitObjects = leftInputValues.map((item) => {
+      return {unit: item}
+    })
+    let arrayOfRightUnitObjects = rightInputValues.map((item) => {
+      return {unit: item}
+    })
+    if (arrayOfLeftUnitObjects.length === 1 && arrayOfLeftUnitObjects[0].unit === '') {
+      arrayOfLeftUnitObjects = []
+    }
+    if (arrayOfRightUnitObjects.length === 1 && arrayOfRightUnitObjects[0].unit === '') {
+      arrayOfRightUnitObjects = []
+    }
+    try {
+      const res = await fetch('/api/maintenance/createJob', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          jobNumber: jobNumber,
+          unitsOnLeft: arrayOfLeftUnitObjects,
+          unitsOnRight: arrayOfRightUnitObjects
+        })
+      })
+      if (res.ok) {
+        console.log('job created')
+        router.push(`/maintenance/`)
+      } else {
+        console.error('Error in creating job:', res.statusText)
+      }
+      } catch (error) {
+        console.error('Error creating job:', error)
+    }
+    setIsLoading(false)
   }
 
   return (
@@ -208,8 +222,15 @@ export default function CreateJob() {
         </>
       ) : (
         <>
-          <InputLabel>Job Number</InputLabel>
-          <input type="text" onChange={handleJobNumberChange} />
+          <div>
+            <InputLabel>Job Number</InputLabel>
+            <input
+              type="text"
+              value={jobNumber}
+              onChange={handleJobNumberChange}
+            />
+            {jobNumberError && <p style={{ color: 'red' }}>{jobNumberError}</p>}
+          </div>
           <Header>Blender</Header>
           <PumpNumberInputContainer>
             <Input>
