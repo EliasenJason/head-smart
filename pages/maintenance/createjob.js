@@ -193,7 +193,7 @@ export default function CreateJob() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          jobNumber: jobNumber,
+          jobNumber: jobNumber.toUpperCase(),
           unitsOnLeft: arrayOfLeftUnitObjects,
           unitsOnRight: arrayOfRightUnitObjects
         })
