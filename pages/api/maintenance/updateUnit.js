@@ -1,7 +1,7 @@
 import connectMongo from "../../../lib/mongodb";
 import unitModel from "../../../lib/schemas/maintenance/unitSchema";
 
-export default async function createUnits(req, res) {
+export default async function updateUnits(req, res) {
   const filter = {number: req.body.number}
   const update = req.body
   console.log('this is the filter:')

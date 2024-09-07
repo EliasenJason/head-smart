@@ -1,7 +1,7 @@
 import connectMongo from "../../../lib/mongodb";
 import jobModel from "../../../lib/schemas/maintenance/jobSchema";
 
-export default async function createJob(req, res) {
+export default async function updateJob(req, res) {
   try {
     await connectMongo()
     //filter: {jobNumber: *string*}

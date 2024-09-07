@@ -56,6 +56,7 @@ const ActionButton = styled.button`
   }
 `;
 
+
 export default function Summary({ job, user, setHasMaintenanceAssigned, hasMaintenanceAssigned }) {
   const [unitMaintenance, setUnitMaintenance] = useState()
   const [userContacts, setUserContacts] = useState()
@@ -64,7 +65,7 @@ export default function Summary({ job, user, setHasMaintenanceAssigned, hasMaint
   const [showNoAssignmentPopup,setShowNoAssignmentPopup] = useState(false)
 
   const router = useRouter()
-
+  
   //get contacts for user.sub on page load using useEffect and api route getContacts.js
     useEffect(() => {
       if (user && user.sub) {
@@ -81,7 +82,7 @@ export default function Summary({ job, user, setHasMaintenanceAssigned, hasMaint
   }
 
   const allUnits = job.unitsOnLeft.concat(job.unitsOnRight)
-
+  
   // Get all component types
   const componentTypes = [...new Set(allUnits.flatMap(unit => Object.keys(unit)).filter(key => key !== '_id' && key !== 'number' && key !== 'type'))]
   
@@ -95,7 +96,6 @@ export default function Summary({ job, user, setHasMaintenanceAssigned, hasMaint
           .map(([componentNumber, component]) => ({ ...component, componentType, componentNumber, unitNumber: unit.number }))
       });
   });
-
   
 
   // Group units with issues by unit number
@@ -170,23 +170,43 @@ allUnits.forEach(unit => {
   };
 
   const assignMaintenance = async () => {
-    const assignedMaintenance = { ...unitMaintenance }
-    console.log(unitMaintenance)
+    let transformedMaintenance = Object.entries(unitMaintenance)
+    // .filter(([unitNumber, unitData]) => unitData.fixer) // Filter out units without a fixer assigned
+    .map(([unitNumber, unitData]) => ({
+      unit: unitNumber,
+      components: Object.entries(unitData)
+        .filter(([key]) => key !== 'fixer')
+        .map(([componentType, componentData]) => ({
+          type: componentType,
+          details: componentData.numbers.map((number, index) => ({
+            hole: number,
+            status: componentData.status[index],
+          })),
+        })),
+      fixer: unitData.fixer,
+    }));
+    console.log('this is transformedMaintenance')
+    console.log(transformedMaintenance)
 
-    //remove any units that do not have a fixer assigned to them
-    Object.keys(assignedMaintenance).forEach(unitNumber => {
-      if (!assignedMaintenance[unitNumber].fixer) {
-        delete assignedMaintenance[unitNumber]
-      }
-    });
-    
+    //get all the unit numbers for units that do not have issues
+    const allUnitNumbers = allUnits.map(unit => unit.number)
+
+      // Filter out unit numbers that already exist in transformedMaintenance
+    const missingUnitNumbers = allUnitNumbers.filter(unitNumber => !transformedMaintenance.some(item => item.unit === unitNumber));
+
+    //add the other units into the transformedMaintenance array
+    transformedMaintenance = transformedMaintenance.concat(
+      missingUnitNumbers.map(unitNumber => ({ unit: unitNumber, components: [], fixer: null }))
+    );
+
+    console.log(transformedMaintenance)
     try {
       const response = await fetch('/api/maintenance/assignMaintenanceToJob', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ maintenance: assignedMaintenance, jobNumber: job.jobNumber })
+        body: JSON.stringify({ maintenance: transformedMaintenance, jobNumber: job.jobNumber })
       });
 
       if (response.ok) {

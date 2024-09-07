@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { useUser } from '@auth0/nextjs-auth0'
 import AddComponentPopUp from '../../../components/maintenance/addComponentPopUp'
 import formatComponentName from "../../../lib/formatComponentName"
+import ModifyMaintenanceComponents from "../../../components/maintenance/modifyMaintenanceComponents";
 
 const Container = styled.div`
   max-width: 800px;
@@ -223,16 +224,9 @@ export default function AssignedMaintenance({maintenance, job}) {
   const [datavan, setDatavanEmail] = useState('')
   const [updatedMaintenance, setUpdatedMaintenance] = useState(maintenance);
   const [showAddComponentPopUp, setShowAddComponentPopUp] = useState(false);
+  //const [selectedUnit, setSelectedUnit] = useState('');
 
   const router = useRouter()
-
-  //for debugging to see updatedMaintenance:
-  // console.log("updatedMaintenance state:")
-  // console.log(updatedMaintenance)
-
-  useEffect((updatedMaintenance) => {
-    console.log(updatedMaintenance)
-  },[updatedMaintenance])
 
   useEffect(() => {
     const getContacts = async () => {
@@ -245,7 +239,7 @@ export default function AssignedMaintenance({maintenance, job}) {
             });
 
             if (response.ok) {
-                // console.log('Contacts fetched successfully');
+                console.log('Contacts fetched successfully');
                 const data = await response.json();
                 setUserContacts(data.teamMembers);
             } else {
@@ -279,121 +273,105 @@ export default function AssignedMaintenance({maintenance, job}) {
       let emailTo = '';
       let emailCc = '';
   
-      updatedMaintenance.filter((item) => item.fixer).forEach((unit) => {
-        emailBody += `Unit ${unit.unit}\n`;
-        if (unit.fixer) {
-          emailBody += `Assigned to: ${unit.fixer.name}\n`;
-          emailTo += `${unit.fixer.email},`;
+      Object.entries(maintenance).forEach(([unitNumber, componentTypes]) => {
+        emailBody += `Unit ${unitNumber}\n`;
+        if (componentTypes.fixer) {
+          emailBody += `Assigned to: ${componentTypes.fixer.name}\n`;
+          emailTo += `${componentTypes.fixer.email},`;
         }
   
-        unit.components.forEach((component) => {
-          emailBody += `${formatComponentName(component.type)}: `;
-          const holeNumbers = component.details.map((detail) => detail.hole);
-          emailBody += `${holeNumbers.join(', ')}\n`;
+        Object.entries(componentTypes).forEach(([componentTypeKey, { numbers, status }]) => {
+          if (componentTypeKey !== 'fixer') {
+            emailBody += `${componentTypeKey}: ${numbers.join(', ')}\n`;
+          }
         });
         emailBody += '\n';
       });
   
       // Remove the trailing comma from the emailTo string
       emailTo = emailTo.slice(0, -1);
-  
+
       // Add the supervisor and datavan email addresses to the Cc field
-      if (supervisor) {
-        emailCc += supervisor;
+    if (supervisor) {
+      emailCc += supervisor;
+    }
+    if (datavan) {
+      if (emailCc) {
+        emailCc += `,${datavan}`;
+      } else {
+        emailCc = datavan;
       }
-      if (datavan) {
-        if (emailCc) {
-          emailCc += `,${datavan}`;
-        } else {
-          emailCc = datavan;
-        }
-      }
+    }
   
-      const mailtoLink = `mailto:${emailTo}?cc=${encodeURIComponent(emailCc)}&subject=You have been assigned pump maintenance&body=${encodeURIComponent(emailBody)}`;
+    const mailtoLink = `mailto:${emailTo}?cc=${encodeURIComponent(emailCc)}&subject=You have been assigned pump maintenance&body=${encodeURIComponent(emailBody)}`;
       window.open(mailtoLink, '_blank');
     } catch (error) {
       console.error('Error in handleEmail:', error);
-    }
-  };
   
-
-  const finalize = async (completed, unitNumber, fixer) => {
-    const unitInformation = updatedMaintenance.find((unit) => unit.unit === unitNumber);
-    // console.log(unitInformation)
-    // console.log(updatedMaintenance)
-
-    
-
-    if (completed) {
-      //update the unitStatuses with the same statuses from unitInformation from unitModel schema
-      const response = await fetch('/api/maintenance/resetUnitStatuses', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({unitInformation}),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Unit statuses reset successfully:', data);
-        //call resetUnitInJobMaintenance from api folder to reset the maintenance for the job
-        const resetResponse = await fetch('/api/maintenance/resetUnitInJobMaintenance', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({unitNumber, job}),
-        });
-        //update history database
-        const historyResponse = await fetch('/api/maintenance/addUnitMaintenanceToJobHistory', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({jobNumber: job, maintenance: unitInformation}),
-        });
-        const historyResponseData = await historyResponse.json();
-        console.log(historyResponseData)
-        //clear the updatedMaintenance for the particular unit
-        setUpdatedMaintenance((prevMaintenance) =>
-          prevMaintenance.map((unit) =>
-            unit.unit === unitNumber
-              ? {
-                  ...unit,
-                  components: [],
-                  fixer: null,
-                }
-              : unit
-          )
-        )
-      } else {
-        console.error('Error resetting unit statuses:', response.status);
-      }
-    } else {
-      //remove button is clicked
-      //remove the unit from maintenance (remove the fixer)
-      const resetResponse = await fetch('/api/maintenance/resetUnitInJobMaintenance', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({unitNumber, job}),
-      });
-      //clear the updatedMaintenance for the particular unit
-      setUpdatedMaintenance((prevMaintenance) =>
-        prevMaintenance.map((unit) =>
-          unit.unit === unitNumber
-            ? {
-                ...unit,
-                components: [],
-                fixer: null,
-              }
-            : unit
-        )
-      )
+      // Fallback option: Open a modal or a new page with a pre-filled email form
+      const emailForm = (
+        <div>
+          <h3>Email Assigned Maintenance</h3>
+          <textarea value={emailBody} readOnly />
+          <button onClick={() => window.open(`mailto:?subject=Assigned Maintenance&body=${encodeURIComponent(emailBody)}`)}>
+            Send Email
+          </button>
+        </div>
+      );
     }
-    
   };
+
+  const markAsComplete = async (unitNumber, fixer, remove) => {
+        const componentUpdates = Object.entries(maintenance[unitNumber]).reduce((acc, [component, data]) => {
+      if (component !== 'fixer') {
+        const componentNumbers = data.numbers;
+        const componentStatuses = data.status;
+
+        componentNumbers.forEach((number, index) => {
+          acc.push({
+            component: `${component}.${number}`,
+            componentNumber: Number(number),
+          });
+        });
+      }
+      return acc;
+    }, []);
+
+    const filter = { number: unitNumber };
+    const update = {
+      $set: {},
+    };
+
+    componentUpdates.forEach(({ component, componentNumber }) => {
+      update.$set[`${component}.status`] = 'green';
+    });
+
+    const options = {
+      new: true,
+      runValidators: true,
+    };
+    const response = await fetch('/api/maintenance/resetUnitMaintenance', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ unit: unitNumber, update, job, fixer, remove }),
+    });
+    if (response.ok) {
+      console.log(response.status);
+      const data = await response.json();
+      console.log(data);
+
+      // Remove the unit number from the updatedMaintenance state
+      const newMaintenance = { ...updatedMaintenance };
+      delete newMaintenance[unitNumber];
+      setUpdatedMaintenance(newMaintenance);
+    } else {
+      console.error('Error marking unit as complete:', response.status);
+    }
+  }
+
+  
 
   const toggleAddComponentPopUp = (unitNumber) => {
     selectedUnit = unitNumber
@@ -402,55 +380,76 @@ export default function AssignedMaintenance({maintenance, job}) {
   
     return (
       <Container>
-        <BackButton onClick={handleGoBack}>Go Back</BackButton>
-        <h2>Assigned Maintenance</h2>
-        
-        {updatedMaintenance.filter((unit) => unit.fixer).map((unit) => ( //filter out units without a fixer than display those with issues
-          <UnitContainer key={unit.unit}>
-            {unit.fixer && (
+      <BackButton onClick={handleGoBack}>Go Back</BackButton>
+      <h2>Assigned Maintenance</h2>
+      {Object.entries(updatedMaintenance).map(([unitNumber, componentTypes]) => (
+        <UnitContainer key={unitNumber}>
+          {componentTypes.fixer && (
               <FixerName>
-                Assigned to: {unit.fixer.name}
-              </FixerName>
+                Assigned to: {componentTypes.fixer.name}</FixerName>
             )}
-            <IssueUnitWithFixer>
-              <IssueUnit>{unit.unit}</IssueUnit>
-                {user?.role?.includes('supervisor') && (
-                <MarkAsCompleteButton onClick={() => finalize(true, unit.unit, unit.fixer.name)}>Completed</MarkAsCompleteButton>
-                )}
-                {user?.role?.includes('supervisor') && (
-                <MarkAsInCompleteButton onClick={() => finalize(false, unit.unit, unit.fixer.name)}>Remove</MarkAsInCompleteButton>
-                )}
-            </IssueUnitWithFixer>
-            <IssuesContainer>
-              {unit.components.map((component) => (
-                <Issues key={component.type}>
-                  <IssueComponentType>{formatComponentName(component.type)}: {/* Added a space after the colon */}
-                  {component.details.map((detail, index) => (
-                    <span
-                      key={`${component.type}-${detail.hole}`}
+
+          <IssueUnitWithFixer>
+            <IssueUnit>{unitNumber}</IssueUnit>
+            
+            {/* {showAddComponentPopUp && 
+              <AddComponentPopUp 
+                toggle={toggleAddComponentPopUp} 
+                maintenance={updatedMaintenance} 
+                setMaintenance={setUpdatedMaintenance} 
+                unit={selectedUnit}
+              />
+            } */}
+            {showAddComponentPopUp && 
+              <ModifyMaintenanceComponents 
+                toggle={toggleAddComponentPopUp} 
+                maintenance={updatedMaintenance[selectedUnit]} 
+                setMaintenance={setUpdatedMaintenance} 
+                unit={selectedUnit}
+              />
+            }
+
+            {user?.role?.includes('supervisor') && (
+            <MarkAsCompleteButton onClick={() => markAsComplete(unitNumber, componentTypes.fixer.name, true)}>Completed</MarkAsCompleteButton>
+            )}
+            {user?.role?.includes('supervisor') && (
+            <MarkAsInCompleteButton onClick={() => markAsComplete(unitNumber, componentTypes.fixer.name, false)}>Remove</MarkAsInCompleteButton>
+            )}
+          </IssueUnitWithFixer>
+
+          <IssuesContainer>
+          {Object.entries(componentTypes).map(
+            ([componentTypeKey, { numbers, status }]) =>
+              componentTypeKey !== 'fixer' && (
+                <Issues key={componentTypeKey}>
+                  <IssueComponentType>
+                    {formatComponentName(componentTypeKey)}
+                    :
+                  </IssueComponentType>{' '}
+                  {numbers.map((number, index) => (
+                    <IssueComponentNumber
+                      key={index}
                       style={{
                         color:
-                          detail.status === 'yellow'
-                            ? 'orange'
-                            : detail.status === 'red'
-                            ? 'red'
-                            : 'green',
+                          status[index] === 'red'
+                            ? '#DC3545'
+                            : status[index] === 'yellow'
+                            ? '#FFC107'
+                            : 'inherit',
                       }}
                     >
-                      {index > 0 ? ', ' : ''}
-                      {detail.hole}
-                    </span>
+                      {number + ' '}
+                    </IssueComponentNumber>
                   ))}
-                  </IssueComponentType>
                 </Issues>
-              ))}
-              {user?.role?.includes('supervisor') && (
-                <AddComponentButton onClick={() => toggleAddComponentPopUp(unit.unit)}>Modify</AddComponentButton>
-              )}
-            </IssuesContainer>
-          </UnitContainer>
-        ))}
-      
+              )
+          )}
+          {user?.role?.includes('supervisor') && (
+            <AddComponentButton onClick={() => toggleAddComponentPopUp(unitNumber)}>Add Component</AddComponentButton>
+            )}
+          </IssuesContainer>
+        </UnitContainer>
+      ))}
       {user?.role?.includes('supervisor') && (
       <PrintButton onClick={handlePrint}>Print Assigned Maintenance</PrintButton>
       )}
@@ -491,11 +490,8 @@ export default function AssignedMaintenance({maintenance, job}) {
         <EmailButton onClick={handleEmail}>Email Assigned Maintenance</EmailButton>
       </EmailContainer>
       )}
-
-      {showAddComponentPopUp && (
-        <AddComponentPopUp toggle={toggleAddComponentPopUp} updatedMaintenance={updatedMaintenance} setUpdatedMaintenance={setUpdatedMaintenance} unit={selectedUnit} job={job}/>
-      )}
-
+      
+      
     </Container>
     )
 }

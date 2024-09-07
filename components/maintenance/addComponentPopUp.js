@@ -1,5 +1,5 @@
-import styled from "styled-components"
-import { useState } from "react"
+import styled from "styled-components";
+import { useState } from "react";
 
 const PopUp = styled.div`
   background: rgba(0, 0, 0, 0.8);
@@ -11,20 +11,127 @@ const PopUp = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`
+  overflow-y: auto;
+`;
+
 const PopUpContent = styled.div`
   background: #fff;
-  padding: 20px;
   border-radius: 4px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   text-align: center;
+  max-width: 600px;
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: 100vh;
+  overflow-y: auto;
+`;
+
+const PopUpHeader = styled.div`
+  display: flex;
+  position: sticky;
+  width: 100%;
+  border-bottom: 1px solid #ccc;
+  top: 0;
+  background: white;
+  padding: 10px;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1;
+`;
+
+const IssuesContainer = styled.div`
+  width: 80%;
+  padding-top: 20px;
 `
 
-export default function AddComponents({toggle, maintenance, setMaintenance, unit}) {
-  const [addedComponents, setAddedComponents] = useState([])
+const UnitNumber = styled.h2`
+  margin: 0;
+  text-align: center;
+  flex-grow: 1;
+`;
 
-  console.log('this is the unit prop:')
-  console.log(unit)
+const CloseButton = styled.button`
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+`;
+
+const ComponentList = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+`;
+
+const ComponentButton = styled.button`
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const ComponentRow = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+`;
+
+const ComponentName = styled.div`
+  flex: 1;
+  text-align: left;
+  font-size: 14px;
+`;
+
+const HoleBoxes = styled.div`
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+`;
+
+const HoleBox = styled.div`
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 5px;
+  cursor: pointer;
+  background-color: ${(props) => (props.isSelected ? "#dc3545" : "#fff")};
+  color: ${(props) => (props.isSelected ? "#fff" : "#000")};
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: ${(props) => (props.isSelected ? "#c82333" : "#e6e6e6")};
+  }
+`;
+
+const ActionButton = styled.button`
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #1e7e34;
+  }
+`;
+
+export default function ModifyMaintenance({ toggle, updatedMaintenance, setUpdatedMaintenance, unit, job }) {
   const components = [
     "dischargeValve",
     "suctionValve",
@@ -41,82 +148,166 @@ export default function AddComponents({toggle, maintenance, setMaintenance, unit
     "glandNut",
     "greaserCheckValve",
     "spring",
-    "ponyRodClamp"
-  ]
+    "ponyRodClamp",
+  ];
 
-  const handleComponentSelect = (component, hole) => {
-    // Check if the component and hole combination already exists
-    const componentExists = addedComponents.some(
-      (item) => item.component === component && item.hole === hole
-    );
-  
-    if (!componentExists) {
-      // If it doesn't exist, add it to the array
-      setAddedComponents([...addedComponents, { component, hole }]);
-    } else {
-      // If it exists, you can show an alert or do nothing
-      alert(`${component} has already been added to hole ${hole}`);
+  const thisUnit = updatedMaintenance.find((item) => item.unit === unit);
+  const [selectedComponent, setSelectedComponent] = useState(null);
+  const [selectedHoles, setSelectedHoles] = useState([]);
+
+  const handleAddComponent = () => {
+    if (selectedComponent && selectedHoles.length > 0) {
+      const newDetails = selectedHoles.map((hole) => ({
+        hole: `${hole}`,
+        status: "yellow",
+      }))
+
+      const existingComponent = thisUnit.components.find((component) => component.type === selectedComponent)
+
+      if (existingComponent) {
+        const updatedDetails = [
+          ...existingComponent.details.filter((detail) => !newDetails.some((newDetail) => newDetail.hole === detail.hole)),
+          ...newDetails,
+        ]
+
+        updatedDetails.sort((a, b) => a.hole.localeCompare(b.hole))
+
+        const updatedComponents = thisUnit.components.map((component) =>
+          component.type === selectedComponent
+            ? { ...component, details: updatedDetails }
+            : component
+        )
+
+        const updatedUnit = { ...thisUnit, components: updatedComponents }
+
+        setUpdatedMaintenance([
+          ...updatedMaintenance.filter((item) => item.unit !== unit),
+          updatedUnit,
+        ])
+      } else {
+        const newComponent = {
+          type: selectedComponent,
+          details: newDetails,
+        }
+
+        const updatedUnit = {
+          ...thisUnit,
+          components: [...thisUnit.components, newComponent],
+        }
+
+        setUpdatedMaintenance([
+          ...updatedMaintenance.filter((item) => item.unit !== unit),
+          updatedUnit,
+        ])
+      }
+
+      setSelectedComponent(null)
+      setSelectedHoles([])
     }
   };
 
-  const handleRemoveComponent = (component, hole) => {
-    const updatedComponents = addedComponents.filter(
-      (item) => !(item.component === component && item.hole === hole)
-    );
-    setAddedComponents(updatedComponents);
-  };
+  const handleHoleSelection = (hole) => {
+    if (selectedHoles.includes(hole)) {
+      setSelectedHoles(selectedHoles.filter((h) => h !== hole));
+    } else {
+      setSelectedHoles([...selectedHoles, hole])
+    }
+  }
 
-
-  const confirmHandler = () => {
-    console.log(maintenance)
-    let maintenanceCopy = { ...maintenance };
-
-    addedComponents.forEach(({ component, hole }) => {
-      if (!maintenanceCopy[unit][component]) {
-        maintenanceCopy[unit][component] = {
-          numbers: [],
-          status: []
-        };
+  const handleRemoveComponent = (componentType, holeNumber) => {
+    const updatedComponents = thisUnit.components.map((component) => {
+      if (component.type === componentType) {
+        const updatedDetails = component.details.filter(
+          (detail) => detail.hole !== `${holeNumber}`
+        )
+        return { ...component, details: updatedDetails }
       }
-      if (maintenanceCopy[unit][component].numbers.includes(hole.toString())) {
-        console.log('Component already exists for this hole.')
-      } else {
-        maintenanceCopy[unit][component].numbers.push(hole.toString());
-        maintenanceCopy[unit][component].status.push('yellow');
-      }
-    });
-    setMaintenance(maintenanceCopy);
+      return component
+    })
+
+    const updatedUnit = {
+      ...thisUnit,
+      components: updatedComponents.filter((component) => component.details.length > 0),
+    }
+
+    setUpdatedMaintenance([
+      ...updatedMaintenance.filter((item) => item.unit !== unit),
+      updatedUnit,
+    ])
+  }
+
+  const handleClosePopUp = async () => {
+    //add all the added components to the currentMaintenance for the job in the database
+    
+    const response = await fetch('/api/maintenance/assignMaintenanceToJob', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({maintenance: updatedMaintenance, jobNumber: job})
+    })
     toggle()
   }
+
   return (
     <PopUp>
       <PopUpContent>
-        {components.map((component, index) => (
-          <div key={index}>
-            <label htmlFor={`${component}-select`}>{component}</label>
-            <select
-              id={`${component}-select`}
-              onChange={(e) => handleComponentSelect(component, e.target.value)}
+        <PopUpHeader>
+          <UnitNumber>{unit}</UnitNumber>
+          <CloseButton onClick={() => handleClosePopUp()}>x</CloseButton>
+        </PopUpHeader>
+        <IssuesContainer>
+        {thisUnit &&
+          thisUnit.components.map((component, index) => (
+            <ComponentRow key={index}>
+              <ComponentName>{component.type}</ComponentName>
+              <HoleBoxes>
+                {component.details.map((detail, detailIndex) => (
+                  <HoleBox
+                    key={detailIndex}
+                    onClick={() => handleRemoveComponent(component.type, detail.hole)}
+                  >
+                    {detail.hole}
+                  </HoleBox>
+                ))}
+              </HoleBoxes>
+            </ComponentRow>
+          ))}
+        </IssuesContainer>
+        <h3>Add Component</h3>
+        <ComponentList>
+          {components.map((component, index) => (
+            <ComponentButton
+              key={index}
+              onClick={() => setSelectedComponent(component)}
+              // disabled={selectedComponent !== null}
             >
-              <option className={'hole'} value="">Select Hole</option>
-              {[1, 2, 3, 4, 5].map(hole => (
-                <option key={hole} value={hole}>
-                  {hole}
-                </option>
-              ))}
-            </select>
-          </div>
-        ))}
-        <div>
-          <h3>Added Components:</h3>
-          <ul>
-            {addedComponents.map((item, index) => (
-              <li key={index}>{item.component} - Hole {item.hole} <button onClick={() => handleRemoveComponent(item.component,item.hole)}>remove</button></li>
-            ))}
-          </ul>
-        </div>
-        <button onClick={() => confirmHandler()}>Confirm</button>
+              {component}
+            </ComponentButton>
+          ))}
+        </ComponentList>
+        {selectedComponent && (
+          <>
+            <ComponentRow>
+              <ComponentName>{selectedComponent}</ComponentName>
+              <HoleBoxes>
+                {["1", "2", "3", "4", "5"].map((hole) => (
+                  <HoleBox
+                    key={hole}
+                    isSelected={selectedHoles.includes(hole)}
+                    onClick={() => handleHoleSelection(hole)}
+                  >
+                    {hole}
+                  </HoleBox>
+                ))}
+              </HoleBoxes>
+            </ComponentRow>
+            <ActionButton onClick={handleAddComponent}>
+              Add Selected
+            </ActionButton>
+          </>
+        )}
       </PopUpContent>
     </PopUp>
-  )
+  );
 }

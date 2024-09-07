@@ -182,7 +182,9 @@ export default function JobDetail({ job }) {
         
         {showDeletePopUp && <Confirm title={"Delete Confirmation"} description={"Are you sure you want to delete this Job?"} action={deleteJob} popUpToggle={toggleDeletePopUp}/>}
         <LoadingSpinner isLoading={isLoading} />
+
         <Summary job={job} user={user} setHasMaintenanceAssigned={setHasMaintenanceAssigned} hasMaintenanceAssigned={hasMaintenanceAssigned}/>
+        
         <NotificationComponent
         show={notificationInfo.show}
         message={notificationInfo.message}

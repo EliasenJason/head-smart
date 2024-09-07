@@ -8,6 +8,8 @@ export default async function handler(req, res) {
     try {
       await connectMongo();
       const { maintenance, jobNumber } = req.body;
+      console.log(maintenance)
+      console.log(jobNumber)
 
       // Find the job document by jobNumber
       const job = await jobModel.findOne({ jobNumber });
