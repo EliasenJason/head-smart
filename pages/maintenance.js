@@ -52,6 +52,12 @@ const ActionButton = styled.button`
   }
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`
+
 export default function Maintenance({data}) {
   const [notificationInfo, setNotificationInfo] = useState({show: false, message: ''})
   
@@ -68,9 +74,12 @@ export default function Maintenance({data}) {
       setNotificationInfo({show: true, message: 'You must be logged in as a supervisor to create a job'})
     }
   }
+  const inspectOldJobs = () => {
+    router.push(`/maintenance/pastjobs`)
+  }
   return (
     <Container>
-      <Title backButtonHref={"/"} Text={'Jobs'} />
+      <Title backButtonHref={"/"} Text={'Active Jobs'} />
         <JobList>
             {data.map((item, index) => {
               return (
@@ -78,7 +87,11 @@ export default function Maintenance({data}) {
               )
             })}
         </JobList>
+      <ButtonContainer>
       <ActionButton onClick={() => createJob()}>Create New Job</ActionButton>
+      <ActionButton onClick={() => inspectOldJobs()}>See Past Jobs</ActionButton>
+      </ButtonContainer>
+      
       <NotificationComponent
         show={notificationInfo.show}
         message={notificationInfo.message}
